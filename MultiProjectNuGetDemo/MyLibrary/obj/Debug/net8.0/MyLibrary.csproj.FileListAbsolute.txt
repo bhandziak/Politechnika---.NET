@@ -1,0 +1,11 @@
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\bin\Debug\net8.0\MyLibrary.deps.json
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\bin\Debug\net8.0\MyLibrary.dll
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\bin\Debug\net8.0\MyLibrary.pdb
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\MyLibrary.GeneratedMSBuildEditorConfig.editorconfig
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\MyLibrary.AssemblyInfoInputs.cache
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\MyLibrary.AssemblyInfo.cs
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\MyLibrary.csproj.CoreCompileInputs.cache
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\MyLibrary.dll
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\refint\MyLibrary.dll
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\MyLibrary.pdb
+F:\Studia\platforma .NET\repos\lab1_fromHome\MultiProjectNuGetDemo\MyLibrary\obj\Debug\net8.0\ref\MyLibrary.dll
