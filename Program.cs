@@ -30,18 +30,21 @@
             catCopy.Breed = "Mainkun";
 
 
-            Console.WriteLine("Orginał animal: ");
+            Console.WriteLine("Oryginał animal: ");
             Console.WriteLine(animal);
+            Console.WriteLine();
 
             Console.WriteLine("Kopia płytka animal: ");
             Console.WriteLine(animalCopy);
+            Console.WriteLine();
 
             Console.WriteLine("Kopia głęboka animal: ");
             Console.WriteLine(animalDeepCopy);
 
             Console.WriteLine();
+            Console.WriteLine();
 
-            Console.WriteLine("Orginał cat: ");
+            Console.WriteLine("Oryginał cat: ");
             Console.WriteLine(cat);
             Console.WriteLine("Kopia płytka cat: ");
             Console.WriteLine(catCopy);
