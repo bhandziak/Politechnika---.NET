@@ -1,50 +1,98 @@
-﻿namespace Prototype_Project
+
+using BookApi.Data;
+using BookApi.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace BookApi
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Owner janKowalski = new Owner("Jan", "Kowalski");
-            Animal animal = new Animal("Azor", 4, janKowalski);
-            Cat cat = new Cat("Puszek", 6,janKowalski, "Norweski leśny");
+            var builder = WebApplication.CreateBuilder(args);
 
-            // kopia płytka
-            Animal animalCopy = animal.ShallowClone();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
-            animalCopy.Age = 1;
-            animalCopy.Name = "Reks";
-            animalCopy.Owner.Name = "Staszek";
+            builder.Services.AddDbContext<BooksDbContext>(options =>
+                options.UseSqlite("Data Source=books.db"));
 
-            // kopia głęboka
-            Animal animalDeepCopy = animal.DeepClone();
+            var app = builder.Build();
 
-            animalDeepCopy.Age = 1;
-            animalDeepCopy.Name = "Reks";
-            animalDeepCopy.Owner.Name = "Andrzej";
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
-            // przykład dla klasy dziedzicznej
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<BooksDbContext>();
+                db.Database.EnsureCreated();
+            }
 
-            Cat catCopy = cat.ShallowClone();
-            catCopy.Age = 2;
-            catCopy.Name = "Kicia";
-            catCopy.Breed = "Mainkun";
+            app.MapGet("/api/books", async (BooksDbContext db) =>
+            (
+                await db.Books.ToArrayAsync()
+            )
+            );
 
+            app.MapGet("/api/books/{id}", async (int id, BooksDbContext db) =>
+            {
+                var book = await db.Books.FindAsync(id);
+                if (book != null)
+                {
+                    return Results.Ok(book);
+                }
+                return Results.NotFound($"book (id:{id}) not found");
 
-            Console.WriteLine("Orginał animal: ");
-            Console.WriteLine(animal);
+            });
 
-            Console.WriteLine("Kopia płytka animal: ");
-            Console.WriteLine(animalCopy);
+            app.MapPost("/api/books", async (Book book, BooksDbContext db) =>
+            {
+                if(book != null)
+                {
+                    db.Books.Add(book);
+                    await db.SaveChangesAsync();
 
-            Console.WriteLine("Kopia głęboka animal: ");
-            Console.WriteLine(animalDeepCopy);
+                    return Results.Created($"/api/books/{book.Id}", book);
+                }
+                return Results.BadRequest();
+            });
 
-            Console.WriteLine();
+            app.MapPut("/api/books/{id}", async (int id, Book input, BooksDbContext db) =>
+            {
+                var book = await db.Books.FindAsync(id);
+                if (book == null)
+                {
+                    return Results.NotFound($"book (id:{id}) not found");
+                }
 
-            Console.WriteLine("Orginał cat: ");
-            Console.WriteLine(cat);
-            Console.WriteLine("Kopia płytka cat: ");
-            Console.WriteLine(catCopy);
+                book.Title = input.Title;
+                book.Author = input.Author;
+                book.PublishedYear = input.PublishedYear;
+                book.IsRead = input.IsRead;
+
+                await db.SaveChangesAsync();
+
+                return Results.Ok($"book (id:{id}) was successfully edited");
+            });
+
+            app.MapDelete("/api/books/{id}", async (int id, BooksDbContext db) =>
+            {
+                var book = await db.Books.FindAsync(id);
+                if (book is null)
+                {
+                    return Results.NotFound($"book (id:{id}) not found");
+                }
+
+                db.Books.Remove(book);
+                await db.SaveChangesAsync();
+
+                return Results.Ok($"removed book (id:{id})");
+            });
+
+            app.Run();
         }
     }
 }
