@@ -1,0 +1,38 @@
+﻿@model List<Event>
+
+<h2>Lista wydarzeń</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tytuł</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ev in Model)
+        {
+            <tr>
+                <td>@ev.Id</td>
+                <td>@ev.Title</td>
+                <td>
+                    <a asp-action="Details" asp-route-eventId="@ev.Id" class="btn btn-info">
+                        Szczegóły
+                    </a>
+                </td>
+                <td>
+                    <a asp-controller="Participants" asp-action="ListByEvent" asp-route-eventId="@ev.Id" class="btn btn-info">
+                        Uczestnicy
+                    </a>
+                </td>
+                <td>
+                    <a asp-controller="Participants" asp-action="AddParticipant" asp-route-eventId="@ev.Id" class="btn btn-info">
+                        Dodaj uczestnika
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,16 @@
+﻿@model EventRegisterProject.Models.Event
+
+@{
+    ViewData["Title"] = "Szczegóły wydarzenia";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Title</h4>
+        <p class="card-text"><strong>ID:</strong> @Model.Id</p>
+        <p class="card-text"><strong>Data:</strong> @Model.Date.ToString("g")</p>
+        <p class="card-text"><strong>Opis:</strong> @Model.Description</p>
+    </div>
+</div>

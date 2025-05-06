@@ -1,0 +1,29 @@
+﻿@model List<EventRegisterProject.Models.Participant>
+
+@{
+    ViewData["Title"] = "Uczestnicy";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Imię i nazwisko</th>
+            <th>Email</th>
+            <th>EventId</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var participant in Model)
+        {
+            <tr>
+                <td>@participant.Id</td>
+                <td>@participant.Name</td>
+                <td>@participant.Email</td>
+                <td>@participant.EventId</td>
+            </tr>
+        }
+    </tbody>
+</table>
