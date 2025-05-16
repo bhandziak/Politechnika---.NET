@@ -4,6 +4,7 @@ using CarWorkshopProjekt.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarWorkshopProjekt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250516180348_AddRelationships-ServiceTask-UsedPart")]
+    partial class AddRelationshipsServiceTaskUsedPart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,10 +47,6 @@ namespace CarWorkshopProjekt.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CommentId");
-
-                    b.HasIndex("ServiceOrderId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -126,12 +125,6 @@ namespace CarWorkshopProjekt.Migrations
 
                     b.HasKey("ServiceOrderId");
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VehicleId");
-
                     b.ToTable("ServiceOrders");
                 });
 
@@ -154,8 +147,6 @@ namespace CarWorkshopProjekt.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ServiceTaskId");
-
-                    b.HasIndex("ServiceOrderId");
 
                     b.ToTable("ServiceTasks");
                 });
@@ -184,31 +175,6 @@ namespace CarWorkshopProjekt.Migrations
                     b.HasIndex("ServiceTaskId");
 
                     b.ToTable("UsedParts");
-                });
-
-            modelBuilder.Entity("CarWorkshopProjekt.Data.User", b =>
-                {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.Vehicle", b =>
@@ -247,63 +213,6 @@ namespace CarWorkshopProjekt.Migrations
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("CarWorkshopProjekt.Data.Comment", b =>
-                {
-                    b.HasOne("CarWorkshopProjekt.Data.ServiceOrder", "ServiceOrder")
-                        .WithMany("Comments")
-                        .HasForeignKey("ServiceOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CarWorkshopProjekt.Data.User", "User")
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ServiceOrder");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CarWorkshopProjekt.Data.ServiceOrder", b =>
-                {
-                    b.HasOne("CarWorkshopProjekt.Data.Customer", "Customer")
-                        .WithMany("ServiceOrders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("CarWorkshopProjekt.Data.User", "User")
-                        .WithMany("ServiceOrders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("CarWorkshopProjekt.Data.Vehicle", "Vehicle")
-                        .WithMany("ServiceOrders")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("User");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("CarWorkshopProjekt.Data.ServiceTask", b =>
-                {
-                    b.HasOne("CarWorkshopProjekt.Data.ServiceOrder", "ServiceOrder")
-                        .WithMany("ServiceTasks")
-                        .HasForeignKey("ServiceOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ServiceOrder");
-                });
-
             modelBuilder.Entity("CarWorkshopProjekt.Data.UsedPart", b =>
                 {
                     b.HasOne("CarWorkshopProjekt.Data.Part", "Part")
@@ -323,38 +232,14 @@ namespace CarWorkshopProjekt.Migrations
                     b.Navigation("ServiceTask");
                 });
 
-            modelBuilder.Entity("CarWorkshopProjekt.Data.Customer", b =>
-                {
-                    b.Navigation("ServiceOrders");
-                });
-
             modelBuilder.Entity("CarWorkshopProjekt.Data.Part", b =>
                 {
                     b.Navigation("UsedParts");
                 });
 
-            modelBuilder.Entity("CarWorkshopProjekt.Data.ServiceOrder", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("ServiceTasks");
-                });
-
             modelBuilder.Entity("CarWorkshopProjekt.Data.ServiceTask", b =>
                 {
                     b.Navigation("UsedParts");
-                });
-
-            modelBuilder.Entity("CarWorkshopProjekt.Data.User", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("ServiceOrders");
-                });
-
-            modelBuilder.Entity("CarWorkshopProjekt.Data.Vehicle", b =>
-                {
-                    b.Navigation("ServiceOrders");
                 });
 #pragma warning restore 612, 618
         }
