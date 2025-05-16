@@ -14,12 +14,13 @@ namespace CarWorkshopProjekt.Data
         public DbSet<UsedPart> UsedParts { get; set; }
         public DbSet<Part> Parts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // TODO zależności kluczy i relacje
+            //Relacje
 
             //relacja UsedPart <-> Part
             modelBuilder.Entity<UsedPart>()
@@ -77,6 +78,13 @@ namespace CarWorkshopProjekt.Data
                 .HasForeignKey(c => c.UserId)              // Klucz obcy w Comment to UserId
                 .OnDelete(DeleteBehavior.Cascade);        // usuwanie komentarzy razem z usuwaniem usera
 
+
+
+        // Domyślne wartości danych
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasDefaultValue("user");
         }
     }
 }
