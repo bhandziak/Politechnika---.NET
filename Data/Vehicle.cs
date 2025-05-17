@@ -2,7 +2,7 @@
 {
     public class Vehicle
     {
-        public int VehicleId { get; set; }
+        public Guid VehicleId { get; set; }
         public string BrandVehicle { get; set; }
         public string ModelVehicle { get; set; }
         public string VINVehicle { get; set; }

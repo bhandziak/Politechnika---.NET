@@ -24,24 +24,22 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.Comment", b =>
                 {
-                    b.Property<int>("CommentId")
+                    b.Property<Guid>("CommentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ServiceOrderId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ServiceOrderId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("TimestampComment")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CommentId");
 
@@ -54,11 +52,9 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.Customer", b =>
                 {
-                    b.Property<int>("CustomerId")
+                    b.Property<Guid>("CustomerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NameCustomer")
                         .IsRequired()
@@ -79,11 +75,9 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.Part", b =>
                 {
-                    b.Property<int>("PartId")
+                    b.Property<Guid>("PartId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PartId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("NamePart")
                         .IsRequired()
@@ -99,14 +93,12 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.ServiceOrder", b =>
                 {
-                    b.Property<int>("ServiceOrderId")
+                    b.Property<Guid>("ServiceOrderId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceOrderId"));
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
@@ -118,11 +110,11 @@ namespace CarWorkshopProjekt.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ServiceOrderId");
 
@@ -137,11 +129,9 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.ServiceTask", b =>
                 {
-                    b.Property<int>("ServiceTaskId")
+                    b.Property<Guid>("ServiceTaskId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceTaskId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -150,8 +140,8 @@ namespace CarWorkshopProjekt.Migrations
                     b.Property<decimal>("LaborCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ServiceOrderId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ServiceOrderId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ServiceTaskId");
 
@@ -162,20 +152,18 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.UsedPart", b =>
                 {
-                    b.Property<int>("UsedPartId")
+                    b.Property<Guid>("UsedPartId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsedPartId"));
-
-                    b.Property<int>("PartId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PartId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceTaskId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ServiceTaskId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UsedPartId");
 
@@ -188,11 +176,9 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Login")
                         .IsRequired()
@@ -215,11 +201,9 @@ namespace CarWorkshopProjekt.Migrations
 
             modelBuilder.Entity("CarWorkshopProjekt.Data.Vehicle", b =>
                 {
-                    b.Property<int>("VehicleId")
+                    b.Property<Guid>("VehicleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BrandVehicle")
                         .IsRequired()

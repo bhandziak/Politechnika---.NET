@@ -44,6 +44,7 @@ namespace CarWorkshopProjekt.Controllers
             // Stwórz nowego użytkownika
             var newUser = new User
             {
+                UserId = Guid.NewGuid(),
                 Login = newUserDto.Login,
                 Password = hashedPassword
             };
@@ -71,10 +72,17 @@ namespace CarWorkshopProjekt.Controllers
             if (!isValid)
                 return Unauthorized("Nieprawidłowy login lub hasło.");
 
-            //JWT można tu
+            var userToSend = new
+            {
+                Login = user.Login,
+                Role = user.Role,
+                Id = user.UserId
+            };
+
             return Ok(new
             {
                 message = "Zalogowano pomyślnie.",
+                user = userToSend
             });
         }
 

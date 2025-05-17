@@ -4,7 +4,7 @@ namespace CarWorkshopProjekt.Data
 {
     public class User
     {
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
         public string Login { get; set; }

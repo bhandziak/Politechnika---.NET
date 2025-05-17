@@ -10,6 +10,17 @@ namespace CarWorkshopProjekt
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactLocalhost3010", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3010")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -22,6 +33,8 @@ namespace CarWorkshopProjekt
 
 
             var app = builder.Build();
+
+            app.UseCors("AllowReactLocalhost3010");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

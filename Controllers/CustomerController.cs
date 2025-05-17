@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarWorkshopProjekt.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/customer")]
     public class CustomerController : ControllerBase
     {
         private readonly ILogger<CustomerController> _logger;
