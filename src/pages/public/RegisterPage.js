@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { Link } from 'react-router-dom';
-import { AuthContext } from "../../context/AuthProvider";
 
 
 import PopUp from "../../components/PopUp";
@@ -12,9 +11,8 @@ const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_#]{4,24}$/;
 const PASS_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,64}$/;
 
 const RegisterPage = () => {
-  const { username: ctxUsername, roles, accessToken } = useContext(AuthContext);
 
-  const [username, setUsername] = useState("");
+  const [login, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
 
@@ -33,7 +31,7 @@ const RegisterPage = () => {
     closePopUpMess();
     const { name, value } = e.target;
 
-    if (name === "username") {
+    if (name === "login") {
       setUsername(value);
       setUserRegex(USER_REGEX.test(value));
     } else if (name === "password") {
@@ -52,7 +50,7 @@ const RegisterPage = () => {
     setPassword2Focus(false);
 
     const { name } = e.target;
-    if (name === "username") setUsernameFocus(true);
+    if (name === "login") setUsernameFocus(true);
     else if (name === "password") setPasswordFocus(true);
     else if (name === "password2") setPassword2Focus(true);
   };
@@ -70,7 +68,7 @@ const RegisterPage = () => {
   const submitRegister = async (e) => {
     e.preventDefault();
 
-    if (!username || !password || !password2) {
+    if (!login || !password || !password2) {
       showPopUpMess("Nazwa użytkownika lub hasło nie może być puste");
       return;
     }
@@ -89,15 +87,17 @@ const RegisterPage = () => {
 
     try {
       const data = await axios.post(APIs.REGISTER_URL,
-        JSON.stringify({ userName: username, password }),
+        JSON.stringify({ 
+            Login: login,
+            Password: password }),
         { headers: { 'Content-Type': 'application/json' } }
       );
 
       if (data.status === 200) {
-        showPopUpMess(data.data.title);
+        showPopUpMess(data.data.message);
       }
     } catch (err) {
-      showPopUpMess(err.response?.data?.message || "Wystąpił błąd");
+      showPopUpMess(err.response?.data || err.message);
     }
 
     setUsername("");
@@ -105,7 +105,6 @@ const RegisterPage = () => {
     setPassword2("");
   };
 
-  console.log("Current context REGISTER:", ctxUsername, roles, accessToken);
 
   return (
     <div id="mainRegisterLoginPage">
@@ -113,21 +112,21 @@ const RegisterPage = () => {
             Register Page
         </h1>
       <form className="loginPanel">
-        <label htmlFor="username" className={username ? (userRegex ? "correctValidation" : "wrongValidation") : ""}>
+        <label htmlFor="login" className={login ? (userRegex ? "correctValidation" : "wrongValidation") : ""}>
           Username:
         </label>
         <input
-          value={username}
+          value={login}
           onChange={handleChange}
           onFocus={handleFocusOn}
-          name="username"
-          id="username"
+          name="login"
+          id="login"
           autoComplete="off"
           type="text"
           className="textInput"
         /><br />
         <ValidationBox
-          regex={userRegex} value={username} focus={usernameFocus}
+          regex={userRegex} value={login} focus={usernameFocus}
           text={
             <>
               Has 5 - 24 characters in length<br />
