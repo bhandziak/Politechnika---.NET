@@ -1,5 +1,6 @@
 
 using CarWorkshopProjekt.Data;
+using CarWorkshopProjekt.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarWorkshopProjekt
@@ -30,6 +31,7 @@ namespace CarWorkshopProjekt
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IAuthHeaderHelper, AuthHeaderHelper>(); //dodanie helpera do pobierania i sprawdzania headera
 
 
             var app = builder.Build();

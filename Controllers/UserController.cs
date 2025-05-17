@@ -14,11 +14,13 @@ namespace CarWorkshopProjekt.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly AppDbContext _context;
+        private readonly IAuthHeaderHelper _authHeaderHelper;
 
-        public UserController(ILogger<UserController> logger, AppDbContext context)
+        public UserController(ILogger<UserController> logger, AppDbContext context, IAuthHeaderHelper authHeaderHelper)
         {
             _logger = logger;
             _context = context;
+            _authHeaderHelper = authHeaderHelper;
         }
         // POST: api/user/register
         [HttpPost("register")]
@@ -84,6 +86,61 @@ namespace CarWorkshopProjekt.Controllers
                 message = "Zalogowano pomyślnie.",
                 user = userToSend
             });
+        }
+
+        // GET: api/user/getAllUsers
+        [HttpGet("getAllUsers")]
+        public IActionResult GetAllUsers()
+        {
+            //Pobranie headera i sprawdzenie czy się zgadza
+            if (!_authHeaderHelper.TryGetUserId(Request, out Guid userId, out IActionResult error))
+                return error;
+            
+            var verified = UserVerification.VerifyUser(userId, _context, "admin");//sprawdzenie czy role=admin
+            if (!verified)
+            {
+                return Forbid("Użytkownik nie ma uprawnień do wyświetlenia zasobu");
+            }
+
+            var users = _context.Users
+                .Select(u => new ReturnUser
+                {
+                    UserId = u.UserId,
+                    Login = u.Login,
+                    Role = u.Role
+                }).ToList();
+            return Ok(new { Users = users });
+        }
+
+        // PUT: api/user/setRole/{userId}
+        [HttpPut("setRole/{userId}")]
+        public IActionResult SetRole(Guid userId, [FromBody] RoleUpdateRequest request)
+        {
+            // Weryfikacja użytkownika
+            //Pobranie headera i sprawdzenie czy się zgadza
+            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
+                return error;
+
+            var verified = UserVerification.VerifyUser(userId, _context, "admin");//sprawdzenie czy role=admin
+            if (!verified)
+            {
+                return Forbid("Użytkownik nie ma uprawnień do zmiany roli");
+            }
+
+            //Szukanie użytkownia w bazie do zmiany roli
+            var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+            if (user == null)
+            {
+                return NotFound($"Nie znaleziono użytkownika o Id = {userId}");
+            }
+
+            //Aktualizacja roli
+            user.Role = request.Role;
+
+            _context.SaveChanges();
+
+            //Odpowiedz servera
+            return Ok(new { Message = $"Rola użytkownika {user.Login} została zmieniona na '{request.Role}'." });
         }
 
 
