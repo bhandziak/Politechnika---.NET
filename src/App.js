@@ -16,6 +16,7 @@ import CommentPage from "./pages/private/CommentPage";
 import SetRolePage from "./pages/private/SetRolePage";
 import CustomersPage from "./pages/private/CustomersPage";
 import AddCustomerForm from "./pages/private/AddCustomerForm";
+import CustomerDetails from "./pages/private/CustomerDetails";
 
 
 const App = () => {
@@ -40,6 +41,7 @@ const App = () => {
             <Route element={<RequireAuth allowedRoles={['admin', 'mechanic', 'receptionist', 'user']} />}>
               <Route path="comment" element={<CommentPage />} />
               <Route path="customers" element={<CustomersPage />} />
+              <Route path="details/:customerId" element={<CustomerDetails />} />
             </Route>
             {/* Only Admin */}
             <Route element={<RequireAuth allowedRoles={['admin']} />}>

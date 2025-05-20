@@ -18,8 +18,11 @@ const SetRolePage =() => {
                 'auth': userId
             }
         });
-        console.log(response.data.users)
-        setUsers(response.data.users);
+        if(response.status === 200){
+          console.log(response.data.users)
+          setUsers(response.data.users);
+        }
+
       } catch (err) {
         popUpRef.current?.show('Błąd pobierania użytkowników: ' + err.message);
       }
@@ -32,7 +35,7 @@ const SetRolePage =() => {
   const handleRoleChange = async (selectedUserId, newRole) => {
     console.log(userId);
     try {
-      await axios.put(`${APIs.SET_ROLE}/${selectedUserId}`, 
+      const response = await axios.put(`${APIs.SET_ROLE}/${selectedUserId}`, 
         { role: newRole },{
             headers: {
                 'Content-Type': 'application/json',
@@ -40,10 +43,12 @@ const SetRolePage =() => {
             }
         } 
     );
-      setUsers(prev =>
-        prev.map(u => u.userId === selectedUserId ? { ...u, role: newRole } : u)
-      );
-      popUpRef.current?.show("Sukces");
+      if(response.status === 200){
+        setUsers(prev =>
+          prev.map(u => u.userId === selectedUserId ? { ...u, role: newRole } : u)
+        );
+        popUpRef.current?.show("Sukces");
+      }
     } catch (err) {
       popUpRef.current?.show('Błąd zmiany roli: ' + err.message);
     }

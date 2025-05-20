@@ -6,11 +6,20 @@
     justify-content: center;
 }
 
+.contentColumn{
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .dataTable{
     width: 100%;
     max-width: 800px;;
     border-collapse: collapse;
     text-align: center;
+      margin-left: auto;
+  margin-right: auto;
 }
 
 .dataTr {

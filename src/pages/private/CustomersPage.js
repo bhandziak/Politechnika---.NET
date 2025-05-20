@@ -1,5 +1,6 @@
 import React, { useEffect, useState,  useContext, useRef} from 'react';
 import axios from '../../api/axios';
+import APIs from '../../api/ApiURL';
 import { AuthContext } from '../../context/AuthProvider';
 import PopUp from '../../components/PopUp';
 import LinkButton from '../../components/LinkButton';
@@ -11,14 +12,17 @@ const CustomersPage = () => {
 
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get('/api/customer/getCustomers',{
+        const response = await axios.get(APIs.GET_ALL_CUSTOMERS,{
             headers: {
                 'Content-Type': 'application/json',
                 'auth': userId
             }
         });
-        console.log(response.data)
-        setCustomers(response.data);
+        if(response.status === 200){
+          console.log(response.data)
+          setCustomers(response.data);
+        }
+
       } catch (err) {
         popUpRef.current?.show('Błąd pobierania użytkowników: ' + err.message);
       }
@@ -49,7 +53,7 @@ const CustomersPage = () => {
               <td className='dataTd'>{customer.surnameCustomer}</td>
               <td className='dataTd'>{customer.phoneNumber}</td>
               <td className='dataTd'>
-                <button className="btn">Details</button>
+                <LinkButton webpath={`/details/${customer.customerId}`} name='Details' />
               </td>
             </tr>
           ))}
