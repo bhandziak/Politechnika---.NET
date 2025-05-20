@@ -27,6 +27,18 @@ namespace CarWorkshopProjekt.Controllers
         [HttpGet("GetCustomers")]
         public ActionResult<IEnumerable<Customer>> GetCustomers()
         {
+            // Weryfikacja użytkownika
+            //Pobranie headera i sprawdzenie czy się zgadza
+            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
+                return BadRequest(new { message = error }); ;
+            //Tablica z zezwolonymi rolami do autoryzacji
+            var allowedRoles = new[] { "admin", "receptionist" };
+            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
+            if (!verified)
+            {
+                return Unauthorized("Użytkownik nie ma uprawnień do wyświetlenia listy klientów");
+            }
+
             var customers = _context.Customers.ToList();
             return Ok(customers);
         }
@@ -38,8 +50,9 @@ namespace CarWorkshopProjekt.Controllers
             //Pobranie headera i sprawdzenie czy się zgadza
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return error;
-
-            var verified = UserVerification.VerifyUser(thisuserId, _context, "receptionist");//sprawdzenie czy role=receptionist
+            //Tablica z zezwolonymi rolami do autoryzacji
+            var allowedRoles = new[] { "receptionist" };
+            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
                 return Unauthorized("Użytkownik nie ma uprawnień do dodania nowego klienta");
@@ -85,8 +98,9 @@ namespace CarWorkshopProjekt.Controllers
             //Pobranie headera i sprawdzenie czy się zgadza
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return error;
-
-            var verified = UserVerification.VerifyUser(thisuserId, _context, "receptionist");//sprawdzenie czy role=receptionist
+            //Tablica z zezwolonymi rolami do autoryzacji
+            var allowedRoles = new[] {"receptionist" };
+            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
                 return Unauthorized("Użytkownik nie ma uprawnień do dodania nowego pojazdu klienta");

@@ -95,11 +95,12 @@ namespace CarWorkshopProjekt.Controllers
             //Pobranie headera i sprawdzenie czy się zgadza
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid userId, out IActionResult error))
                 return error;
-            
-            var verified = UserVerification.VerifyUser(userId, _context, "admin");//sprawdzenie czy role=admin
+            //Tablica z zezwolonymi rolami do autoryzacji
+            var allowedRoles = new[] { "admin" };
+            var verified = UserVerification.VerifyUser(userId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
-                return Forbid("Użytkownik nie ma uprawnień do wyświetlenia zasobu");
+                return Unauthorized("Użytkownik nie ma uprawnień do wyświetlenia zasobu");
             }
 
             var users = _context.Users
@@ -120,8 +121,9 @@ namespace CarWorkshopProjekt.Controllers
             //Pobranie headera i sprawdzenie czy się zgadza
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return error;
-
-            var verified = UserVerification.VerifyUser(thisuserId, _context, "admin");//sprawdzenie czy role=admin
+            //Tablica z zezwolonymi rolami do autoryzacji
+            var allowedRoles = new[] { "admin" };
+            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
                 return Unauthorized("Użytkownik nie ma uprawnień do zmiany roli");
