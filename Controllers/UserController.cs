@@ -121,7 +121,7 @@ namespace CarWorkshopProjekt.Controllers
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return error;
 
-            var verified = UserVerification.VerifyUser(userId, _context, "admin");//sprawdzenie czy role=admin
+            var verified = UserVerification.VerifyUser(thisuserId, _context, "admin");//sprawdzenie czy role=admin
             if (!verified)
             {
                 return Forbid("Użytkownik nie ma uprawnień do zmiany roli");
