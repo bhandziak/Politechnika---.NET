@@ -59,7 +59,7 @@ namespace CarWorkshopProjekt.Controllers
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return error;
             //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "receptionist" };
+            var allowedRoles = new[] { "receptionist","admin" };
             var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
@@ -107,7 +107,7 @@ namespace CarWorkshopProjekt.Controllers
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return error;
             //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "receptionist" };
+            var allowedRoles = new[] { "receptionist", "admin" };
             var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
@@ -150,6 +150,7 @@ namespace CarWorkshopProjekt.Controllers
                 return Conflict("Klient posiada już taki samochód.");
             }
             //Stworzenie nowego samochodu z podanych danych
+            AddServiceOrder serviceOrderDTO;
             var newVehicle = new Vehicle
             {
                 VehicleId = Guid.NewGuid(),
@@ -158,10 +159,23 @@ namespace CarWorkshopProjekt.Controllers
                 VINVehicle = newVehicleDto.VINVehicle,
                 RegistralNumberVehicle = newVehicleDto.RegistralNumberVehicle,
                 YearVehicle = newVehicleDto.YearVehicle,
-                ImageURL = null
+                ImageURL = "none"
+            };
+
+            //Stworzenie nowego ServiceOrder z danego nowego samochodu
+            var newServiceOrder = new ServiceOrder
+            {
+                ServiceOrderId = Guid.NewGuid(),
+                VehicleId = newVehicle.VehicleId,
+                CustomerId = customerID,
+                UserId = null,
+                StatusOrder = null,
+                DateCreated = null,
+                DateFinished = null
             };
 
             _context.Vehicles.Add(newVehicle);
+            _context.ServiceOrders.Add(newServiceOrder);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Samochód dodany pomyślnie." });
@@ -191,13 +205,62 @@ namespace CarWorkshopProjekt.Controllers
                     NameCustomer = c.NameCustomer,
                     SurnameCustomer = c.SurnameCustomer,
                     PhoneNumber = c.PhoneNumber,
-                    ServiceOrders = c.ServiceOrders
+                    Vehicles = c.ServiceOrders
+                        .Select(so => so.Vehicle)
+                        .Distinct()
+                        .Select(v => new ReturnVehicle
+                {
+                    VehicleId = v.VehicleId,
+                    BrandVehicle = v.BrandVehicle,
+                    ModelVehicle = v.ModelVehicle,
+                    VINVehicle = v.VINVehicle,
+                    RegistralNumberVehicle = v.RegistralNumberVehicle,
+                    YearVehicle = v.YearVehicle,
+                    ImageURL = v.ImageURL
                 })
-                .FirstOrDefaultAsync();
+                .ToList()
+                })
+                 .FirstOrDefaultAsync();
             if (customer == null)
                 return NotFound();
 
             return Ok(customer);
+        }
+        // POST: api/customer/getDetails/{customerID}/addVehicleImage
+        [HttpPost("getDetails/{customerID}/addVehicleImage")]
+        public async Task<IActionResult> AddVehicleImage(Guid vehicleId, IFormFile photo)
+        {
+            // Walidacja pliku
+            if (photo == null || photo.Length == 0)
+                return BadRequest("Plik jest pusty.");
+
+            var ext = Path.GetExtension(photo.FileName).ToLowerInvariant();
+            var allowedExtensions = new[] { ".jpg", ".png" };
+
+            if (!allowedExtensions.Contains(ext))
+                return BadRequest("Dozwolone formaty: JPG, PNG.");
+
+            // Znajdź pojazd
+            var vehicle = await _context.Vehicles.FindAsync(vehicleId);
+            if (vehicle == null)
+                return NotFound("Pojazd nie istnieje.");
+
+            // Zapis pliku
+            var fileName = $"{Guid.NewGuid()}{ext}";
+            var uploadPath = Path.Combine("wwwroot", "uploads");
+            Directory.CreateDirectory(uploadPath);
+            var filePath = Path.Combine(uploadPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await photo.CopyToAsync(stream);
+            }
+
+            // Zapis ścieżki
+            vehicle.ImageURL = $"/uploads/{fileName}";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Obraz zapisany", imageUrl = vehicle.ImageURL });
         }
 
     }

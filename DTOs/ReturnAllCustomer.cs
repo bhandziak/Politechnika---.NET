@@ -10,7 +10,7 @@ namespace CarWorkshopProjekt.DTOs
         public string PhoneNumber { get; set; }
 
         // kolekcja ServiceOrders powiązanych z tym customerem
-        public ICollection<ServiceOrder> ServiceOrders { get; set; }
+        public List<ReturnVehicle> Vehicles { get; set; }
 
     }
 }
