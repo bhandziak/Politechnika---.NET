@@ -3,6 +3,12 @@ import { AuthContext } from "../../context/AuthProvider";
 import PopUp from "../../components/PopUp";
 import axios from "../../api/axios";
 import APIs from "../../api/ApiURL";
+import ValidationBox from "../../components/ValidationBox";
+import ValidatedInput from "../../components/ValidatedInput";
+
+const NAME_REGEX = /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,29}$/;
+const SURNAME_REGEX = /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż\-]{1,49}$/;
+const PHONE_REGEX = /^\+48\d{9}$/;
 
 const AddCustomerForm = () => {
   const { userId } = useContext(AuthContext);
@@ -13,6 +19,16 @@ const AddCustomerForm = () => {
     surname: "",
     phoneNumber: ""
   });
+  const [regexStatus, setRegexStatus] = useState({
+    name: false,
+    surname: false,
+    phoneNumber: false
+  })
+  const [formFocus, setFormFocus] = useState({
+    name: false,
+    surname: false,
+    phoneNumber: false
+  })
 
   const handleChange = (e) => {
     popUpRef.current?.hide();
@@ -22,6 +38,23 @@ const AddCustomerForm = () => {
       ...prev,
       [name]: value
     }));
+
+    setRegexStatus(prev => ({
+      ...prev,
+      name: name === "name" ? NAME_REGEX.test(value) : prev.name,
+      surname: name === "surname" ? SURNAME_REGEX.test(value) : prev.surname,
+      phoneNumber: name === "phoneNumber" ? PHONE_REGEX.test(value) : prev.phoneNumber
+    }));
+  };
+
+  const handleFocusOn = (e) => {
+    const { name } = e.target;
+
+    setFormFocus({
+      name: name === "name",
+      surname: name === "surname",
+      phoneNumber: name === "phoneNumber"
+    });
   };
 
   const addCustomer = async (e) => {
@@ -31,6 +64,10 @@ const AddCustomerForm = () => {
 
     if (!name || !surname || !phoneNumber) {
       popUpRef.current?.show("Wszystkie pola są wymagane.");
+      return;
+    }
+    if (!regexStatus.name || !regexStatus.surname || !regexStatus.phoneNumber) {
+      popUpRef.current?.show("Podane dane klienta nie spełniają kryteriów.");
       return;
     }
 
@@ -50,6 +87,7 @@ const AddCustomerForm = () => {
       if (response.status === 200) {
         popUpRef.current?.show(response.data.message);
         setFormData({ name: "", surname: "", phoneNumber: "" });
+        setRegexStatus({ name: false, surname: false, phoneNumber: false });
       }
     } catch (err) {
       popUpRef.current?.show(err.response?.data || err.message);
@@ -61,35 +99,46 @@ const AddCustomerForm = () => {
       
       <form className="loginPanel">
         <h3>Add Customer</h3>
-        <label htmlFor="name">Name:</label>
-        <input
-          name="name"
-          id="name"
-          className="textInput"
-          autoComplete="off"
-          value={formData.name}
-          onChange={handleChange}
-        /><br />
+        
+          <ValidatedInput 
+            htmlName={"name"}
+            labelText="Name"
+            formData={formData.name}
+            regexStatus = {regexStatus.name}
+            formFocus = {formFocus.name}
+            type="text"
+            handleChange = {handleChange}
+            handleFocusOn = {handleFocusOn}
+            validationText={<>Imię musi zaczynać się wielką literą i zawierać tylko litery.</>}
+            />
 
-        <label htmlFor="surname">Surname:</label>
-        <input
-          name="surname"
-          id="surname"
-          className="textInput"
-          autoComplete="off"
-          value={formData.surname}
-          onChange={handleChange}
-        /><br />
+        <ValidatedInput 
+          htmlName="surname"
+          labelText="Surname"
+          formData={formData.surname}
+          regexStatus={regexStatus.surname}
+          formFocus={formFocus.surname}
+          type="text"
+          handleChange={handleChange}
+          handleFocusOn={handleFocusOn}
+          validationText={
+            <>Nazwisko musi zaczynać się wielką literą i zawierać tylko litery lub myślnik.</>
+          }
+        />
+        <ValidatedInput 
+          htmlName="phoneNumber"
+          labelText="Phone Number"
+          formData={formData.phoneNumber}
+          regexStatus={regexStatus.phoneNumber}
+          formFocus={formFocus.phoneNumber}
+          type="text"
+          handleChange={handleChange}
+          handleFocusOn={handleFocusOn}
+          validationText={
+            <>Numer telefonu musi być w formacie +48123456789.</>
+          }
+        />
 
-        <label htmlFor="phoneNumber">Phone Number:</label>
-        <input
-          name="phoneNumber"
-          id="phoneNumber"
-          className="textInput"
-          autoComplete="off"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-        /><br />
 
         <PopUp ref={popUpRef} />
         <button className="btn" onClick={addCustomer}>Add Customer</button>

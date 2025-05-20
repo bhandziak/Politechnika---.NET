@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 
 import PopUp from "../../components/PopUp";
-import ValidationBox from "../../components/ValidationBox";
+import ValidatedInput from "../../components/ValidatedInput";
 import axios from "../../api/axios";
 import APIs from "../../api/ApiURL";
 
@@ -13,65 +13,76 @@ const PASS_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,
 const RegisterPage = () => {
   const popUpRef = useRef();
   
-  const [login, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
+  const [formData, setFormData] = useState({
+    login: "",
+    password: "",
+    password2: "",
+  });
 
-  const [userRegex, setUserRegex] = useState(false);
-  const [passRegex, setPassRegex] = useState(false);
-  const [pass2Regex, setPass2Regex] = useState(false);
+  const [regexStatus, setRegexStatus] = useState({
+    login: false,
+    password: false,
+    password2: false,
+  });
 
-  const [usernameFocus, setUsernameFocus] = useState(false);
-  const [passwordFocus, setPasswordFocus] = useState(false);
-  const [password2Focus, setPassword2Focus] = useState(false);
+  const [formFocus, setFormFocus] = useState({
+    login: false,
+    password: false,
+    password2: false,
+  });
 
 
   const handleChange = (e) => {
     popUpRef.current?.hide();
     const { name, value } = e.target;
 
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
     if (name === "login") {
-      setUsername(value);
-      setUserRegex(USER_REGEX.test(value));
+      setRegexStatus((prev) => ({ ...prev, login: USER_REGEX.test(value) }));
     } else if (name === "password") {
-      setPassword(value);
-      setPassRegex(PASS_REGEX.test(value));
-      setPass2Regex(password2 === value);
+      setRegexStatus((prev) => ({
+        ...prev,
+        password: PASS_REGEX.test(value),
+        password2: formData.password2 === value,
+      }));
     } else if (name === "password2") {
-      setPassword2(value);
-      setPass2Regex(password === value);
+      setRegexStatus((prev) => ({
+        ...prev,
+        password2: formData.password === value,
+      }));
     }
   };
 
   const handleFocusOn = (e) => {
-    setUsernameFocus(false);
-    setPasswordFocus(false);
-    setPassword2Focus(false);
-
     const { name } = e.target;
-    if (name === "login") setUsernameFocus(true);
-    else if (name === "password") setPasswordFocus(true);
-    else if (name === "password2") setPassword2Focus(true);
+    setFormFocus({ login: false, password: false, password2: false });
+    setFormFocus((prev) => ({ ...prev, [name]: true }));
   };
 
 
   const submitRegister = async (e) => {
     e.preventDefault();
 
+    const { login, password, password2 } = formData;
+    const { login: loginRegex, password: passRegex, password2: pass2Regex } = regexStatus;
+
     if (!login || !password || !password2) {
       popUpRef.current?.show("Nazwa użytkownika lub hasło nie może być puste");
       return;
     }
 
-    if (!userRegex || !passRegex) {
+    if (!loginRegex || !passRegex) {
       popUpRef.current?.show("Nazwa użytkownika lub hasło nie spełniają kryteriów");
       return;
     }
 
     if (!pass2Regex) {
       popUpRef.current?.show("Podane hasła są różne!");
-      setPassword("");
-      setPassword2("");
+      setFormData((prev) => ({ ...prev, password: "", password2: "" }));
       return;
     }
 
@@ -90,57 +101,43 @@ const RegisterPage = () => {
       popUpRef.current?.show(err.response?.data || err.message);
     }
 
-    setUsername("");
-    setPassword("");
-    setPassword2("");
+    setFormData({ login: "", password: "", password2: "" });
+    setRegexStatus({ login: false, password: false, password2: false });
   };
 
 
   return (
     <div id="mainRegisterLoginPage">
-        <h1 className="titleOfPage">
-            Register Page
-        </h1>
+      <h1 className="titleOfPage">Register Page</h1>
       <form className="loginPanel">
-        <label htmlFor="login" className={login ? (userRegex ? "correctValidation" : "wrongValidation") : ""}>
-          Username:
-        </label>
-        <input
-          value={login}
-          onChange={handleChange}
-          onFocus={handleFocusOn}
-          name="login"
-          id="login"
-          autoComplete="off"
-          type="text"
-          className="textInput"
-        /><br />
-        <ValidationBox
-          regex={userRegex} value={login} focus={usernameFocus}
-          text={
+        <ValidatedInput
+          htmlName="login"
+          labelText="Login"
+          formData={formData.login}
+          regexStatus={regexStatus.login}
+          formFocus={formFocus.login}
+          handleChange={handleChange}
+          handleFocusOn={handleFocusOn}
+          inputType="text"
+          validationText={
             <>
               Has 5 - 24 characters in length<br />
               Has to start with English letter<br />
-              Can contain English letter, digits and -_#
+              Can contain English letters, digits and -_#
             </>
           }
         />
 
-        <label htmlFor="password" className={password ? (passRegex ? "correctValidation" : "wrongValidation") : ""}>
-          Password:
-        </label>
-        <input
-          value={password}
-          onChange={handleChange}
-          onFocus={handleFocusOn}
-          name="password"
-          id="password"
-          type="password"
-          className="textInput"
-        /><br />
-        <ValidationBox
-          regex={passRegex} value={password} focus={passwordFocus}
-          text={
+        <ValidatedInput
+          htmlName="password"
+          labelText="Password"
+          formData={formData.password}
+          regexStatus={regexStatus.password}
+          formFocus={formFocus.password}
+          handleChange={handleChange}
+          handleFocusOn={handleFocusOn}
+          inputType="password"
+          validationText={
             <>
               Has 8 - 64 characters in length<br />
               At least one uppercase English letter <br />
@@ -150,21 +147,16 @@ const RegisterPage = () => {
           }
         />
 
-        <label htmlFor="password2" className={password2 ? (pass2Regex ? "correctValidation" : "wrongValidation") : ""}>
-          Repeat password:
-        </label>
-        <input
-          value={password2}
-          onChange={handleChange}
-          onFocus={handleFocusOn}
-          name="password2"
-          id="password2"
-          type="password"
-          className="textInput"
-        /><br />
-        <ValidationBox
-          regex={pass2Regex} value={password2} focus={password2Focus}
-          text={<>Passwords have to match<br /></>}
+        <ValidatedInput
+          htmlName="password2"
+          labelText="Repeat password"
+          formData={formData.password2}
+          regexStatus={regexStatus.password2}
+          formFocus={formFocus.password2}
+          handleChange={handleChange}
+          handleFocusOn={handleFocusOn}
+          inputType="password"
+          validationText={<>Passwords have to match</>}
         />
 
         <PopUp ref={popUpRef} />
