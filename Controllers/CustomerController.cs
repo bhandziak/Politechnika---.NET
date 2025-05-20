@@ -32,7 +32,7 @@ namespace CarWorkshopProjekt.Controllers
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return BadRequest(new { message = error }); ;
             //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "admin", "receptionist" };
+            var allowedRoles = new[] { "admin", "receptionist", "user","mechanic" };
             var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
@@ -42,6 +42,7 @@ namespace CarWorkshopProjekt.Controllers
             var customers = _context.Customers
             .Select(c => new ReturnCustomer//DTO dla zwrócenia danych klienta
             {
+                CustomerId = c.CustomerId,
                 NameCustomer = c.NameCustomer,
                 SurnameCustomer = c.SurnameCustomer,
                 PhoneNumber = c.PhoneNumber
@@ -166,7 +167,7 @@ namespace CarWorkshopProjekt.Controllers
             return Ok(new { message = "Samochód dodany pomyślnie." });
         }
 
-        // GET: api/customer/getDetails/{customerID}
+        // GET: api/customer/getDetails/{customerID}        
         [HttpGet("getDetails/{customerID}")]
         public async Task<IActionResult> GetDetailsAsync(Guid customerID)
         {
@@ -175,7 +176,7 @@ namespace CarWorkshopProjekt.Controllers
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return BadRequest(new { message = error }); ;
             //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "admin", "receptionist" };
+            var allowedRoles = new[] { "admin", "receptionist", "user", "mechanic" };
             var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
@@ -198,5 +199,6 @@ namespace CarWorkshopProjekt.Controllers
 
             return Ok(customer);
         }
+
     }
 }
