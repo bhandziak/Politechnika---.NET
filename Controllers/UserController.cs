@@ -124,7 +124,7 @@ namespace CarWorkshopProjekt.Controllers
             var verified = UserVerification.VerifyUser(thisuserId, _context, "admin");//sprawdzenie czy role=admin
             if (!verified)
             {
-                return Forbid("Użytkownik nie ma uprawnień do zmiany roli");
+                return Unauthorized("Użytkownik nie ma uprawnień do zmiany roli");
             }
 
             //Szukanie użytkownia w bazie do zmiany roli
@@ -142,7 +142,5 @@ namespace CarWorkshopProjekt.Controllers
             //Odpowiedz servera
             return Ok(new { Message = $"Rola użytkownika {user.Login} została zmieniona na '{request.Role}'." });
         }
-
-
     }
 }

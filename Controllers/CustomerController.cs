@@ -42,7 +42,7 @@ namespace CarWorkshopProjekt.Controllers
             var verified = UserVerification.VerifyUser(thisuserId, _context, "receptionist");//sprawdzenie czy role=receptionist
             if (!verified)
             {
-                return Forbid("Użytkownik nie ma uprawnień do dodania nowego klienta");
+                return Unauthorized("Użytkownik nie ma uprawnień do dodania nowego klienta");
             }
 
             var nameRegex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,29}$");
@@ -89,7 +89,7 @@ namespace CarWorkshopProjekt.Controllers
             var verified = UserVerification.VerifyUser(thisuserId, _context, "receptionist");//sprawdzenie czy role=receptionist
             if (!verified)
             {
-                return Forbid("Użytkownik nie ma uprawnień do dodania nowego pojazdu klienta");
+                return Unauthorized("Użytkownik nie ma uprawnień do dodania nowego pojazdu klienta");
             }
 
             //Szukanie klienta w bazie
