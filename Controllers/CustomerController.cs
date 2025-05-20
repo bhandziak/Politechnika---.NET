@@ -23,8 +23,8 @@ namespace CarWorkshopProjekt.Controllers
             _authHeaderHelper = authHeaderHelper;
         }
 
-        // GET: api/customer/GetCustomers
-        [HttpGet("GetCustomers")]
+        // GET: api/customer/getCustomers
+        [HttpGet("getCustomers")]
         public ActionResult<IEnumerable<Customer>> GetCustomers()
         {
             // Weryfikacja użytkownika
@@ -39,7 +39,14 @@ namespace CarWorkshopProjekt.Controllers
                 return Unauthorized("Użytkownik nie ma uprawnień do wyświetlenia listy klientów");
             }
 
-            var customers = _context.Customers.ToList();
+            var customers = _context.Customers
+            .Select(c => new ReturnCustomer//DTO dla zwrócenia danych klienta
+            {
+                NameCustomer = c.NameCustomer,
+                SurnameCustomer = c.SurnameCustomer,
+                PhoneNumber = c.PhoneNumber
+            })
+            .ToList();
             return Ok(customers);
         }
         // POST: api/customer/addCustomer
@@ -90,8 +97,8 @@ namespace CarWorkshopProjekt.Controllers
             return Ok(new { message = "Klient zarejestrowany pomyślnie." });
         }
 
-        // POST: api/customer/{customerID}/addVehicle
-        [HttpPost("{customerID}/addVehicle")]
+        // POST: api/customer/addVehicle/{customerID}
+        [HttpPost("addVehicle/{customerID}")]
         public async Task<IActionResult> AddVehicle(Guid customerID, [FromBody] AddVehicle newVehicleDto)
         {
             // Weryfikacja użytkownika
@@ -99,7 +106,7 @@ namespace CarWorkshopProjekt.Controllers
             if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
                 return error;
             //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] {"receptionist" };
+            var allowedRoles = new[] { "receptionist" };
             var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
             if (!verified)
             {
@@ -134,7 +141,7 @@ namespace CarWorkshopProjekt.Controllers
                 .Include(c => c.ServiceOrders)
                 .ThenInclude(so => so.Vehicle)
                 .FirstOrDefaultAsync(c =>
-                    c.CustomerId == customerID  && //ogranicza zapytanie do szukania tylko dla tego klienta któremu dodajemy samochód
+                    c.CustomerId == customerID && //ogranicza zapytanie do szukania tylko dla tego klienta któremu dodajemy samochód
                     c.ServiceOrders.Any(so => so.Vehicle != null && so.Vehicle.VINVehicle == newVehicleDto.VINVehicle));
 
             if (existingCustomer != null)
@@ -159,5 +166,37 @@ namespace CarWorkshopProjekt.Controllers
             return Ok(new { message = "Samochód dodany pomyślnie." });
         }
 
+        // GET: api/customer/getDetails/{customerID}
+        [HttpGet("getDetails/{customerID}")]
+        public async Task<IActionResult> GetDetailsAsync(Guid customerID)
+        {
+            // Weryfikacja użytkownika
+            //Pobranie headera i sprawdzenie czy się zgadza
+            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
+                return BadRequest(new { message = error }); ;
+            //Tablica z zezwolonymi rolami do autoryzacji
+            var allowedRoles = new[] { "admin", "receptionist" };
+            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
+            if (!verified)
+            {
+                return Unauthorized("Użytkownik nie ma uprawnień do wyświetlenia detali klientów");
+            }
+
+            var customer = await _context.Customers
+                .Where(c => c.CustomerId == customerID)
+                .Select(c => new ReturnAllCustomer
+                {
+                    CustomerId = c.CustomerId,
+                    NameCustomer = c.NameCustomer,
+                    SurnameCustomer = c.SurnameCustomer,
+                    PhoneNumber = c.PhoneNumber,
+                    ServiceOrders = c.ServiceOrders
+                })
+                .FirstOrDefaultAsync();
+            if (customer == null)
+                return NotFound();
+
+            return Ok(customer);
         }
     }
+}
