@@ -12,7 +12,8 @@ const RequireAuth = ({ allowedRoles }) => {
   if (allowedRoles.includes(role)) {
     return <Outlet />;
   } else if (userId) {
-    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    // unauthorized
+    return <Navigate to="/comment" state={{ from: location }} replace />;
   } else {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

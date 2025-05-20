@@ -1,5 +1,6 @@
 import React, { useEffect, useState,  useContext, useRef} from 'react';
 import axios from '../../api/axios';
+import APIs from '../../api/ApiURL';
 import { AuthContext } from '../../context/AuthProvider';
 import PopUp from '../../components/PopUp';
 
@@ -9,10 +10,9 @@ const SetRolePage =() => {
     const [users, setUsers] = useState([]);
     const roles = ['admin', 'mechanic', 'receptionist', 'user'];
 
-    useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/api/user/getAllUsers',{
+        const response = await axios.get(APIs.GET_ALL_USERS,{
             headers: {
                 'Content-Type': 'application/json',
                 'auth': userId
@@ -25,13 +25,14 @@ const SetRolePage =() => {
       }
     };
 
-    fetchUsers();
+    useEffect(() => {
+      fetchUsers();
   }, []);
 
   const handleRoleChange = async (selectedUserId, newRole) => {
     console.log(userId);
     try {
-      await axios.put(`/api/user/setRole/${selectedUserId}`, 
+      await axios.put(`${APIs.SET_ROLE}/${selectedUserId}`, 
         { role: newRole },{
             headers: {
                 'Content-Type': 'application/json',

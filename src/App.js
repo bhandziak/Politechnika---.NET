@@ -14,6 +14,8 @@ import RegisterPage from "./pages/public/RegisterPage";
 import LoginPage from "./pages/public/LoginPage";
 import CommentPage from "./pages/private/CommentPage";
 import SetRolePage from "./pages/private/SetRolePage";
+import CustomersPage from "./pages/private/CustomersPage";
+import AddCustomerForm from "./pages/private/AddCustomerForm";
 
 
 const App = () => {
@@ -34,9 +36,19 @@ const App = () => {
 
           {/* protected routes */}
           <Route path="/" element={<Layout />}>
+            {/* All users */}
             <Route element={<RequireAuth allowedRoles={['admin', 'mechanic', 'receptionist', 'user']} />}>
               <Route path="comment" element={<CommentPage />} />
+              <Route path="customers" element={<CustomersPage />} />
+            </Route>
+            {/* Only Admin */}
+            <Route element={<RequireAuth allowedRoles={['admin']} />}>
               <Route path="setrole" element={<SetRolePage />} />
+            </Route>
+
+            {/* Only Receptionist, Admin */}
+            <Route element={<RequireAuth allowedRoles={['receptionist', 'admin']} />}>
+              <Route path="addcustomer" element={<AddCustomerForm />} />
             </Route>
           </Route>
 

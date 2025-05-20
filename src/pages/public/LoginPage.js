@@ -37,7 +37,7 @@ const LoginPage = () => {
         }
 
         try {
-            const response = await axios.post(APIs.LOGIN_URL,
+            const response = await axios.post(APIs.LOGIN,
                 JSON.stringify({
                     Login: formState.login,
                     Password: formState.password

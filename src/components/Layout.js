@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { Outlet, Link, useLocation  } from 'react-router-dom';
 import { AuthContext } from '../context/AuthProvider';
 
+import LinkButton from "./LinkButton";
+
 
 const Layout = () => {
   const { login, userId, role, setAuth } = useContext(AuthContext);
@@ -15,13 +17,16 @@ const Layout = () => {
   return (
     <>
       <nav id='navigationPanel'>
-        <Link to="/comment"
-         className={currentPath == '/comment' ? 'navButton navButtonActive' : 'navButton'} >
-        Comment Page</Link>
+        <LinkButton webpath='/comment' name='Comment Page' />
+        <LinkButton webpath='/customers' name='Customers' />
         { role == 'admin' &&
-            <Link to="/setrole"
-            className={currentPath == '/setrole' ? 'navButton navButtonActive' : 'navButton'}>
-            Set Role</Link>
+        <>
+            <LinkButton webpath='/setrole' name='Set Role' />
+        </>
+        }
+        { ['receptionist', 'admin'].includes(role)  &&
+        <>
+        </>
         }
 
         <div id='rightSide'>
@@ -37,7 +42,7 @@ const Layout = () => {
       </nav>
 
       <main id='layoutContext'>
-        <Outlet /> {/* tu będą renderowane podstrony */}
+        <Outlet /> {/* podstrony */}
       </main>
     </>
   );

@@ -76,7 +76,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const data = await axios.post(APIs.REGISTER_URL,
+      const data = await axios.post(APIs.REGISTER,
         JSON.stringify({ 
             Login: login,
             Password: password }),

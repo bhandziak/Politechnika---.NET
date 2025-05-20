@@ -1,0 +1,66 @@
+import React, { useEffect, useState,  useContext, useRef} from 'react';
+import axios from '../../api/axios';
+import { AuthContext } from '../../context/AuthProvider';
+import PopUp from '../../components/PopUp';
+import LinkButton from '../../components/LinkButton';
+
+const CustomersPage = () => {
+    const popUpRef = useRef();
+    const { login, userId, role, setAuth } = useContext(AuthContext);
+    const [customers, setCustomers] = useState([]);
+
+    const fetchCustomers = async () => {
+      try {
+        const response = await axios.get('/api/customer/getCustomers',{
+            headers: {
+                'Content-Type': 'application/json',
+                'auth': userId
+            }
+        });
+        console.log(response.data)
+        setCustomers(response.data);
+      } catch (err) {
+        popUpRef.current?.show('Błąd pobierania użytkowników: ' + err.message);
+      }
+    };
+
+    useEffect(() => {
+      fetchCustomers();
+  }, []);
+  return (
+    <div className='content'>
+      
+        <PopUp ref={popUpRef} />
+      <table className='dataTable'>
+        <thead>
+          <tr className='dataTr'>
+            <th className='dataTh'>Nr.</th>
+            <th className='dataTh'>Name</th>
+            <th className='dataTh'>Surname</th>
+            <th className='dataTh'>Phone number</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {customers.map((customer,index) => (
+            <tr className='dataTr' key={customer.customerId}>
+              <td className='dataTd'>{index + 1}</td>
+              <td className='dataTd'>{customer.nameCustomer}</td>
+              <td className='dataTd'>{customer.surnameCustomer}</td>
+              <td className='dataTd'>{customer.phoneNumber}</td>
+              <td className='dataTd'>
+                <button className="btn">Details</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      { ['receptionist', 'admin'].includes(role)  &&
+        <LinkButton webpath='/addcustomer' name='Add customer' />
+      }
+      
+    </div>
+  )
+}
+
+export default CustomersPage
