@@ -1,6 +1,11 @@
 @use './variables' as vars;
 
-html, body {height: 100%; margin: 0; font-family: "Gill Sans", sans-serif;}
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: "Gill Sans", sans-serif;
+    color: vars.$secondary-color;
+}
 
 #root{
     height: 100%;
@@ -15,19 +20,8 @@ html, body {height: 100%; margin: 0; font-family: "Gill Sans", sans-serif;}
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: #070604;
+    background-color: vars.$bk-color;
     color: vars.$secondary-color;
-}
-
-.welcomeBlock{
-    margin-left: 5px;
-    width: 70%;
-    height: 100%;
-    background-color: #0e0e0ecc;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .titleOfPage {
@@ -57,12 +51,7 @@ html, body {height: 100%; margin: 0; font-family: "Gill Sans", sans-serif;}
 #mainloginPage{
     flex-direction: column-reverse;
 }
-.welcomeBlock {
-    display: none;
-}
-#welcomeBlockSmall {
-    display: block;
-}
+
 
 
 
@@ -74,7 +63,7 @@ html, body {height: 100%; margin: 0; font-family: "Gill Sans", sans-serif;}
     flex-direction:column;
     justify-content: center;
     align-items: center;
-    background-color: #0e0e0e;
+    background-color: vars.$panel-color;
 
     border-radius: 15px;
 }
@@ -106,7 +95,7 @@ html, body {height: 100%; margin: 0; font-family: "Gill Sans", sans-serif;}
     text-align: center; 
     outline: none;
     font-size: 18px;
-    background-color: #070604;
+    background-color: vars.$bk-color;
     color: vars.$secondary-color;
 }
 
@@ -140,7 +129,7 @@ a:hover{
 
 .btn:hover{
     background-color: vars.$primary-color;
-    color: #070604;
+    color: vars.$bk-color;
 }
 
 .btn:active{
@@ -153,10 +142,10 @@ label {
 }
 
 .popUp{
-    position: absolute;
-    //top:50%;
-    //left: 50%;
-    transform: translate(100%, -100%);
+    position: fixed;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     border-radius: 9px;
     border-color: vars.$btn-color;
     border-width: 2px;
@@ -179,7 +168,7 @@ label {
 }
 
 .closeBtn:hover{
-    color: #070604;
+    color: vars.$bk-color;
 }
 
 .closeBtnBox{

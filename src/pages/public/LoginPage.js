@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import PopUp from "../../components/PopUp";
 import axios from "../../api/axios";
@@ -10,17 +10,16 @@ import APIs from "../../api/ApiURL";
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const popUpRef = useRef();
     const { login, userId, role, setAuth } = useContext(AuthContext);
     const [formState, setFormState] = useState({
         login: "",
         password: ""
     });
-
-    const [popUpMess, setPopUpMess] = useState("");
-    const [stateOfPopUp, setStateOfPopUp] = useState(false);
+    
 
     const handleChange = (event) => {
-        closePopUpMess();
+        popUpRef.current?.hide();
 
         const { name, value } = event.target;
         setFormState(prev => ({
@@ -33,7 +32,7 @@ const LoginPage = () => {
         event.preventDefault();
 
         if (formState.login === "" || formState.password === "") {
-            showPopUpMess("Nazwa użytkownika lub hasło nie może być puste");
+            popUpRef.current?.show("Nazwa użytkownika lub hasło nie może być puste");
             return;
         }
 
@@ -71,20 +70,10 @@ const LoginPage = () => {
 
         } catch (err) {
             let mess = err.response?.data || err.message;
-            showPopUpMess(mess);
+            popUpRef.current?.show(mess);
         }
 
         setFormState({ login: "", password: "" });
-    };
-
-    const showPopUpMess = (mess) => {
-        setPopUpMess(mess);
-        setStateOfPopUp(true);
-    };
-
-    const closePopUpMess = () => {
-        setPopUpMess("");
-        setStateOfPopUp(false);
     };
 
     console.log("Current context LOGIN:", login, role);
@@ -116,7 +105,7 @@ const LoginPage = () => {
                     className="textInput"
                 /><br />
 
-                <PopUp state={stateOfPopUp} mess={popUpMess} close={closePopUpMess} />
+                <PopUp ref={popUpRef} />
 
                 <button className="btn" onClick={submitLogin}>Login</button><br /><br />
                 <div>Don't have an account? Sign up below</div>
@@ -124,18 +113,6 @@ const LoginPage = () => {
                 <Link to="/comment">Comment Page</Link>
             </form>
 
-            <div className="welcomeBlock">
-                <div className="logoAndText">
-                    <div id="logo" />
-                    <div className="bottomText">
-                        <div className="highlightText">Lorem ipsum dolor sit amet.</div>
-                        consectetur adipiscing elit. Nam egestas arcu quis ex vehicula facilisis...
-                    </div>
-                </div>
-            </div>
-
-            <div id="welcomeBlockSmall">
-            </div>
         </div>
     );
 };

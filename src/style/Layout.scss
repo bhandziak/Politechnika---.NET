@@ -1,0 +1,74 @@
+@use './variables' as vars;
+
+#navigationPanel{
+    padding: 1rem;
+    background-color: vars.$panel-color;
+    display: flex;
+    border-bottom: solid 1px vars.$secondary-color;
+    color: vars.$btn-color;
+}
+
+#rightSide{
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.highlight {
+  color: vars.$link-color;
+  font-weight: 600;
+}
+
+#userInfo {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: vars.$btn-color;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.navButton {
+    background-color: rgba(0, 0, 0, 0);
+    border: none ;
+    border-radius: 20px;
+    font-size: 18px;
+    padding: 4px 30px 4px 30px;
+    font-weight: 500;
+    text-decoration: none;
+    height: 40px;
+    color: vars.$btn-color;
+    transition: 0.2s;
+
+    display: flex;
+    align-items: center;
+
+    user-select: none;
+    cursor: pointer;
+}
+
+.navButtonActive{
+    background-color: vars.$btn-active-color;
+}
+.navButtonActive:hover{
+    background-color: vars.$btn-hover-color;
+}
+
+.navButton:hover{
+    background-color: vars.$primary-color;
+    color: vars.$bk-color;
+}
+
+.navButton:active{
+    filter: brightness(0.8);
+}
+
+#layoutContext{
+    padding: "1rem";
+    background-color: vars.$bk-color;
+    height: 100%;
+    text-align: center;
+}

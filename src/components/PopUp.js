@@ -1,15 +1,31 @@
-import React from 'react';
+import React, { useImperativeHandle, forwardRef, useState, useEffect  } from 'react';
 
-const PopUp = ({ state, mess, close }) => {
+const PopUp = forwardRef((props, ref) => {
+  const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState('');
+
+
+
+  useImperativeHandle(ref, () => ({
+    show(msg) {
+      setMessage(msg);
+      setVisible(true);
+    },
+    hide() {
+      setVisible(false);
+    }
+  }));
+
+
   return (
     <>
-      {state && (
+      {visible && (
         <table className="popUp">
           <tbody>
             <tr>
-              <th>{mess}</th>
+              <th>{message}</th>
               <th className="closeBtnBox">
-                <div className="closeBtn" onClick={close} />
+                <div className="closeBtn" onClick={() => setVisible(false)} />
               </th>
             </tr>
           </tbody>
@@ -17,6 +33,6 @@ const PopUp = ({ state, mess, close }) => {
       )}
     </>
   );
-};
+});
 
 export default PopUp;

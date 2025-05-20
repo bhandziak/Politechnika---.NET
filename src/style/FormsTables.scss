@@ -1,0 +1,39 @@
+@use './variables' as vars;
+
+.content{
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.dataTable{
+    width: 100%;
+    max-width: 800px;;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.dataTr {
+    border-bottom: 2px solid vars.$secondary-color;
+    color: vars.$link-color;
+    padding: 12px;
+}
+
+.dataTd {
+    color: vars.$btn-color;
+    padding: 12px;
+}
+
+.dataTh {
+    padding: 12px;
+}
+
+select {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid vars.$secondary-color;
+  background-color: vars.$panel-color;
+  color: vars.$btn-color;
+  outline: none;
+}

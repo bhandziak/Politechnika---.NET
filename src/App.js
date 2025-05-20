@@ -6,12 +6,14 @@ import {
   Navigate
 } from 'react-router-dom';
 
+import Layout from "./components/Layout";
 import AuthProvider from "./context/AuthProvider";
 import RequireAuth from "./context/RequireAuth";
 import RedirectIfAuth from "./context/RedirectIfAuth";
 import RegisterPage from "./pages/public/RegisterPage";
 import LoginPage from "./pages/public/LoginPage";
 import CommentPage from "./pages/private/CommentPage";
+import SetRolePage from "./pages/private/SetRolePage";
 
 
 const App = () => {
@@ -31,8 +33,11 @@ const App = () => {
           } />
 
           {/* protected routes */}
-          <Route element={<RequireAuth allowedRoles={['user']} />}>
-            <Route path="/comment" element={<CommentPage />} />
+          <Route path="/" element={<Layout />}>
+            <Route element={<RequireAuth allowedRoles={['admin', 'mechanic', 'receptionist', 'user']} />}>
+              <Route path="comment" element={<CommentPage />} />
+              <Route path="setrole" element={<SetRolePage />} />
+            </Route>
           </Route>
 
           {/* 404 */}

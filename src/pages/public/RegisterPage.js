@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { Link } from 'react-router-dom';
 
 
@@ -11,7 +11,8 @@ const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_#]{4,24}$/;
 const PASS_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,64}$/;
 
 const RegisterPage = () => {
-
+  const popUpRef = useRef();
+  
   const [login, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -24,11 +25,9 @@ const RegisterPage = () => {
   const [passwordFocus, setPasswordFocus] = useState(false);
   const [password2Focus, setPassword2Focus] = useState(false);
 
-  const [popUpMess, setPopUpMess] = useState("");
-  const [stateOfPopUp, setStateOfPopUp] = useState(false);
 
   const handleChange = (e) => {
-    closePopUpMess();
+    popUpRef.current?.hide();
     const { name, value } = e.target;
 
     if (name === "login") {
@@ -55,31 +54,22 @@ const RegisterPage = () => {
     else if (name === "password2") setPassword2Focus(true);
   };
 
-  const showPopUpMess = (mess) => {
-    setPopUpMess(mess);
-    setStateOfPopUp(true);
-  };
-
-  const closePopUpMess = () => {
-    setPopUpMess('');
-    setStateOfPopUp(false);
-  };
 
   const submitRegister = async (e) => {
     e.preventDefault();
 
     if (!login || !password || !password2) {
-      showPopUpMess("Nazwa użytkownika lub hasło nie może być puste");
+      popUpRef.current?.show("Nazwa użytkownika lub hasło nie może być puste");
       return;
     }
 
     if (!userRegex || !passRegex) {
-      showPopUpMess("Nazwa użytkownika lub hasło nie spełniają kryteriów");
+      popUpRef.current?.show("Nazwa użytkownika lub hasło nie spełniają kryteriów");
       return;
     }
 
     if (!pass2Regex) {
-      showPopUpMess("Podane hasła są różne!");
+      popUpRef.current?.show("Podane hasła są różne!");
       setPassword("");
       setPassword2("");
       return;
@@ -94,10 +84,10 @@ const RegisterPage = () => {
       );
 
       if (data.status === 200) {
-        showPopUpMess(data.data.message);
+        popUpRef.current?.show(data.data.message);
       }
     } catch (err) {
-      showPopUpMess(err.response?.data || err.message);
+      popUpRef.current?.show(err.response?.data || err.message);
     }
 
     setUsername("");
@@ -177,8 +167,7 @@ const RegisterPage = () => {
           text={<>Passwords have to match<br /></>}
         />
 
-        <PopUp state={stateOfPopUp} mess={popUpMess} close={closePopUpMess} />
-
+        <PopUp ref={popUpRef} />
         <button className="btn" onClick={submitRegister}>Register</button><br /><br />
         <div>Already have an account? Log in below</div>
         <Link to="/login">Log in</Link>
