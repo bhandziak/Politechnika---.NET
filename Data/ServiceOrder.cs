@@ -7,7 +7,8 @@
         public Guid CustomerId { get; set; }
         public Guid? UserId { get; set; }
         public string? StatusOrder { get; set; }
-        public DateTime? DateCreated { get; set; }
+
+        public string? Description { get; set; } // nowe pole !
         public DateTime? DateFinished { get; set; }
 
         // kolekcja ServiceTasks powiązanych z tym zadaniem (tym ServiceOrder)
