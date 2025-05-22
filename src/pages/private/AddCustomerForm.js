@@ -3,7 +3,6 @@ import { AuthContext } from "../../context/AuthProvider";
 import PopUp from "../../components/PopUp";
 import axios from "../../api/axios";
 import APIs from "../../api/ApiURL";
-import ValidationBox from "../../components/ValidationBox";
 import ValidatedInput from "../../components/ValidatedInput";
 
 const NAME_REGEX = /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,29}$/;

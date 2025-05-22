@@ -19,8 +19,8 @@ const CustomersPage = () => {
             }
         });
         if(response.status === 200){
-          console.log(response.data)
-          setCustomers(response.data);
+            console.log(response.data)
+            setCustomers(response.data);
         }
 
       } catch (err) {
@@ -32,9 +32,16 @@ const CustomersPage = () => {
       fetchCustomers();
   }, []);
   return (
-    <div className='content'>
-      
+    <div className='contentColumn'>
+      <div id='userInfo2'>
+      { ['receptionist', 'admin'].includes(role)  &&
+        <LinkButton webpath='/addcustomer' name='Add customer' />
+      }
+      </div>
+        
+
         <PopUp ref={popUpRef} />
+        <div style={{'width': '100%'}}>
       <table className='dataTable'>
         <thead>
           <tr className='dataTr'>
@@ -46,7 +53,7 @@ const CustomersPage = () => {
           </tr>
         </thead>
         <tbody>
-          {customers.map((customer,index) => (
+          {customers != null && customers.map((customer,index) => (
             <tr className='dataTr' key={customer.customerId}>
               <td className='dataTd'>{index + 1}</td>
               <td className='dataTd'>{customer.nameCustomer}</td>
@@ -59,9 +66,8 @@ const CustomersPage = () => {
           ))}
         </tbody>
       </table>
-      { ['receptionist', 'admin'].includes(role)  &&
-        <LinkButton webpath='/addcustomer' name='Add customer' />
-      }
+      </div>
+      
       
     </div>
   )

@@ -9,7 +9,10 @@ const APIs = {
     ADD_CUSTOMER: "api/customer/addCustomer",
     GET_ALL_CUSTOMERS: '/api/customer/getCustomers',
 //#US4
-    CUSTOMER_DETAILS: "api/customer/getDetails"
+    CUSTOMER_DETAILS: "api/customer/getDetails",
+    ADD_VEHICLE: "api/customer/addVehicle",
+    SEND_PHOTO: "api/customer/getDetails/addVehicleImage"
+
 
 }
 

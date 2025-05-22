@@ -57,7 +57,8 @@ html, body {
 
 .loginPanel {
     width: 500px;
-    height: 400px;
+    height: auto;
+    padding: 50px 0 50px 0;
     background-color: antiquewhite;
     display: flex;
     flex-direction:column;

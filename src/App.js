@@ -17,6 +17,7 @@ import SetRolePage from "./pages/private/SetRolePage";
 import CustomersPage from "./pages/private/CustomersPage";
 import AddCustomerForm from "./pages/private/AddCustomerForm";
 import CustomerDetails from "./pages/private/CustomerDetails";
+import AddVehicleForm from "./pages/private/AddVehicleForm";
 
 
 const App = () => {
@@ -51,6 +52,7 @@ const App = () => {
             {/* Only Receptionist, Admin */}
             <Route element={<RequireAuth allowedRoles={['receptionist', 'admin']} />}>
               <Route path="addcustomer" element={<AddCustomerForm />} />
+              <Route path="addvehicle" element={<AddVehicleForm />} />
             </Route>
           </Route>
 
