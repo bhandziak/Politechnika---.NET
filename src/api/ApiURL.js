@@ -2,6 +2,7 @@ const APIs = {
 //#US1
     LOGIN : "/api/user/login",
     REGISTER : "/api/user/register",
+    LOGOUT: "/api/user/logout",
 //#US2
     GET_ALL_USERS : "/api/user/getAllUsers",
     SET_ROLE: "/api/user/setRole",

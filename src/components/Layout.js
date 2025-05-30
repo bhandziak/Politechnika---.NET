@@ -3,6 +3,8 @@ import { Outlet, Link, useLocation  } from 'react-router-dom';
 import { AuthContext } from '../context/AuthProvider';
 
 import LinkButton from "./LinkButton";
+import axios from "../api/axios";
+import APIs from "../api/ApiURL";
 
 
 const Layout = () => {
@@ -10,9 +12,20 @@ const Layout = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const logOut = () =>{
-        setAuth('', null, null);
-        sessionStorage.removeItem('userInfo');
+  const logOut = async () =>{
+        try{
+          const response = await axios.post(APIs.LOGOUT, null,{
+            withCredentials: true
+          });
+          if(response.status === 200){
+              setAuth('', null, null);
+              sessionStorage.removeItem('userInfo');
+          }
+        } catch (e){
+          console.log(e);
+        }
+
+
   };
   return (
     <>

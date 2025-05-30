@@ -16,7 +16,8 @@ const SetRolePage =() => {
             headers: {
                 'Content-Type': 'application/json',
                 'auth': userId
-            }
+            },
+            withCredentials: true
         });
         if(response.status === 200){
           console.log(response.data.users)
@@ -40,7 +41,8 @@ const SetRolePage =() => {
             headers: {
                 'Content-Type': 'application/json',
                 'auth': userId
-            }
+            },
+            withCredentials : true
         } 
     );
       if(response.status === 200){
@@ -50,7 +52,7 @@ const SetRolePage =() => {
         popUpRef.current?.show("Sukces");
       }
     } catch (err) {
-      popUpRef.current?.show('Błąd zmiany roli: ' + err.message);
+      popUpRef.current?.show('Błąd zmiany roli: ' + err.response?.data || err.message);
     }
   };
   return (

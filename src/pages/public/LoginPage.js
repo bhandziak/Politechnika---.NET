@@ -39,18 +39,20 @@ const LoginPage = () => {
         try {
             const response = await axios.post(APIs.LOGIN,
                 JSON.stringify({
-                    Login: formState.login,
+                    UserName: formState.login,
                     Password: formState.password
                 }),
                 {
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    withCredentials: true
                 }
             );
 
             const res = response.data;
             
+            console.log(res);
 
             if (response.status === 200) {
 
