@@ -68,7 +68,7 @@ namespace CarWorkshopProjekt.Controllers
             });
         }
 
-        // GET: api/user/logout
+        // POST: api/user/logout
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -110,6 +110,32 @@ namespace CarWorkshopProjekt.Controllers
                 return StatusCode(500, message);
 
             return Ok(new { Message = message });
+        }
+
+        // GET: api/user/getMechanics
+        [Authorize(Roles = "admin,receptionist")] //SPRAWDZIĆ ROLE!!
+        [HttpGet("getMechanics")]
+        public async Task<IActionResult> GetMechanics()
+        {
+            var users = _userManager.Users.ToList();
+            var mechanicsList = new List<object>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                if (roles.Contains("mechanic"))
+                {
+                    mechanicsList.Add(new
+                    {
+                        userId = user.Id,
+                        userName = user.UserName,
+                        role = "mechanic"
+                    });
+                }
+            }
+
+            return Ok(new { users = mechanicsList });
         }
     }
 }
