@@ -190,9 +190,9 @@ namespace CarWorkshopProjekt.Controllers
 
             return Ok(customer);
         }
-        // POST: api/customer/getDetails/addVehicleImage/{customerID}
+        // POST: api/customer/getDetails/addVehicleImage/{vehicleID}
         [Authorize(Roles = "admin,receptionist,user,mechanic")]
-        [HttpPost("getDetails/addVehicleImage/{customerID}")]
+        [HttpPost("getDetails/addVehicleImage/{vehicleID}")]
         public async Task<IActionResult> AddVehicleImage(Guid vehicleId, IFormFile photo)
         {
             // Walidacja pliku
