@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using CarWorkshopProjekt.Services;
+using CarWorkshopProjekt.Mappers;
 
 namespace CarWorkshopProjekt.Controllers
 {
@@ -17,7 +18,8 @@ namespace CarWorkshopProjekt.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ICustomerService _customerService; // Services/ICustomerService
-
+        private readonly CustomerMapper _customerMapper = new(); //Mapperly customer
+        private readonly VehicleMapper _vehicleMapper = new(); //Mapperly vehicle
         public CustomerController(
             AppDbContext context,
             ICustomerService customerService // Services
@@ -32,16 +34,10 @@ namespace CarWorkshopProjekt.Controllers
         [HttpGet("getCustomers")]
         public ActionResult<IEnumerable<Customer>> GetCustomers()
         {
-            var customers = _context.Customers
-            .Select(c => new ReturnCustomer//DTO dla zwrócenia danych klienta
-            {
-                CustomerId = c.CustomerId,
-                NameCustomer = c.NameCustomer,
-                SurnameCustomer = c.SurnameCustomer,
-                PhoneNumber = c.PhoneNumber
-            })
-            .ToList();
-            return Ok(customers);
+            var customers = _context.Customers.ToList(); // pobranie encji
+            var returnDtos = _customerMapper.ToReturnDtoList(customers); // mapowanie do DTO
+
+            return Ok(returnDtos);
         }
 
         // POST: api/customer/addCustomer
@@ -50,10 +46,10 @@ namespace CarWorkshopProjekt.Controllers
         public async Task<IActionResult> AddCustomer([FromBody] AddCustomer newCustomerDto)
         {
             // Services
-            if (!_customerService.IsValidFirstName(newCustomerDto.FirstName, out var firstNameError))
+            if (!_customerService.IsValidFirstName(newCustomerDto.NameCustomer, out var firstNameError))
                 return BadRequest(firstNameError);
 
-            if (!_customerService.IsValidLastName(newCustomerDto.LastName, out var lastNameError))
+            if (!_customerService.IsValidLastName(newCustomerDto.SurnameCustomer, out var lastNameError))
                 return BadRequest(lastNameError);
 
             if (!_customerService.IsValidPhoneNumber(newCustomerDto.PhoneNumber, out var phoneError))
@@ -64,14 +60,9 @@ namespace CarWorkshopProjekt.Controllers
             if (existingCustomer != null)
                 return Conflict("Klient o takim nr. telefonu już istnieje.");
 
-            //stworzenie nowego klienta
-            var newCustomer = new Customer
-            {
-                CustomerId = Guid.NewGuid(),
-                NameCustomer = newCustomerDto.FirstName,
-                SurnameCustomer = newCustomerDto.LastName,
-                PhoneNumber = newCustomerDto.PhoneNumber,
-            };
+            //stworzenie nowego klienta przez mapperly
+            var newCustomer = _customerMapper.MapToEntity(newCustomerDto);
+            newCustomer.CustomerId = Guid.NewGuid(); //ręczne dodanie guid
 
             _context.Customers.Add(newCustomer);
             await _context.SaveChangesAsync();
@@ -120,18 +111,12 @@ namespace CarWorkshopProjekt.Controllers
             {
                 return Conflict("Klient posiada już taki samochód.");
             }
-            //Stworzenie nowego samochodu z podanych danych
-            var newVehicle = new Vehicle
-            {
-                VehicleId = Guid.NewGuid(),
-                BrandVehicle = newVehicleDto.BrandVehicle,
-                ModelVehicle = newVehicleDto.ModelVehicle,
-                VINVehicle = newVehicleDto.VINVehicle,
-                RegistralNumberVehicle = newVehicleDto.RegistralNumberVehicle,
-                YearVehicle = newVehicleDto.YearVehicle,
-                ImageURL = "none"
-            };
+            //stworzenie nowego klienta przez mapperly
+            var newVehicle = _vehicleMapper.MapToEntity(newVehicleDto);            
 
+            newVehicle.ImageURL = "none"; //ręczne dodanie imageUrl
+            newVehicle.VehicleId = Guid.NewGuid(); //ręczne dodanie guid
+            
             //Stworzenie nowego ServiceOrder z danego nowego samochodu
             var newServiceOrder = new ServiceOrder
             {
@@ -190,6 +175,7 @@ namespace CarWorkshopProjekt.Controllers
         [HttpPost("getDetails/addVehicleImage/{vehicleID}")]
         public async Task<IActionResult> AddVehicleImage(Guid vehicleId, IFormFile photo)
         {
+            // Services
             if (!_customerService.IsValidImage(photo, out var error))
                 return BadRequest(error);
 
