@@ -80,6 +80,7 @@ namespace CarWorkshopProjekt
             });
 
             builder.Services.AddScoped<ICustomerService, CustomerService>(); //Service do CustomerController
+            builder.Services.AddScoped<IUserService, UserService>(); //Service do UserController
 
 
             var app = builder.Build();

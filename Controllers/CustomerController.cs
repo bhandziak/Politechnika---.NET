@@ -16,15 +16,15 @@ namespace CarWorkshopProjekt.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly ICustomerService _validationService; // Services/ICustomerValidationService
+        private readonly ICustomerService _customerService; // Services/ICustomerService
 
         public CustomerController(
             AppDbContext context,
-            ICustomerService validationService // Services
+            ICustomerService customerService // Services
             )
         {
             _context = context;
-            _validationService = validationService; // Services
+            _customerService = customerService; // Services
         }
 
         // GET: api/customer/getCustomers
@@ -50,13 +50,13 @@ namespace CarWorkshopProjekt.Controllers
         public async Task<IActionResult> AddCustomer([FromBody] AddCustomer newCustomerDto)
         {
             // Services
-            if (!_validationService.IsValidFirstName(newCustomerDto.FirstName, out var firstNameError))
+            if (!_customerService.IsValidFirstName(newCustomerDto.FirstName, out var firstNameError))
                 return BadRequest(firstNameError);
 
-            if (!_validationService.IsValidLastName(newCustomerDto.LastName, out var lastNameError))
+            if (!_customerService.IsValidLastName(newCustomerDto.LastName, out var lastNameError))
                 return BadRequest(lastNameError);
 
-            if (!_validationService.IsValidPhoneNumber(newCustomerDto.PhoneNumber, out var phoneError))
+            if (!_customerService.IsValidPhoneNumber(newCustomerDto.PhoneNumber, out var phoneError))
                 return BadRequest(phoneError);
 
             //sprawdzenie, czy klient istnieje w bazie (po nr telefonu)
@@ -92,19 +92,19 @@ namespace CarWorkshopProjekt.Controllers
             }
 
             // Services
-            if (!_validationService.IsValidBrand(newVehicleDto.BrandVehicle, out var brandError))
+            if (!_customerService.IsValidBrand(newVehicleDto.BrandVehicle, out var brandError))
                 return BadRequest(brandError);
 
-            if (!_validationService.IsValidModel(newVehicleDto.ModelVehicle, out var modelError))
+            if (!_customerService.IsValidModel(newVehicleDto.ModelVehicle, out var modelError))
                 return BadRequest(modelError);
 
-            if (!_validationService.IsValidVIN(newVehicleDto.VINVehicle, out var vinError))
+            if (!_customerService.IsValidVIN(newVehicleDto.VINVehicle, out var vinError))
                 return BadRequest(vinError);
 
-            if (!_validationService.IsValidRegistralNumber(newVehicleDto.RegistralNumberVehicle, out var regError))
+            if (!_customerService.IsValidRegistralNumber(newVehicleDto.RegistralNumberVehicle, out var regError))
                 return BadRequest(regError);
 
-            if (!_validationService.IsValidYear(newVehicleDto.YearVehicle, out var yearError))
+            if (!_customerService.IsValidYear(newVehicleDto.YearVehicle, out var yearError))
                 return BadRequest(yearError);
 
 
@@ -190,7 +190,7 @@ namespace CarWorkshopProjekt.Controllers
         [HttpPost("getDetails/addVehicleImage/{vehicleID}")]
         public async Task<IActionResult> AddVehicleImage(Guid vehicleId, IFormFile photo)
         {
-            if (!_validationService.IsValidImage(photo, out var error))
+            if (!_customerService.IsValidImage(photo, out var error))
                 return BadRequest(error);
 
             // Szukanie pojazdu
@@ -199,7 +199,7 @@ namespace CarWorkshopProjekt.Controllers
                 return NotFound("Pojazd nie istnieje.");
 
             // Zapis pliku
-            var imageUrl = await _validationService.SaveImageAsync(photo);
+            var imageUrl = await _customerService.SaveImageAsync(photo);
             vehicle.ImageURL = imageUrl;
             await _context.SaveChangesAsync();
 
