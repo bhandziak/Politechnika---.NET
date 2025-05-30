@@ -16,9 +16,9 @@ const CustomerDetails = () => {
       try {
         const response = await axios.get(`${APIs.CUSTOMER_DETAILS}/${customerId}`,{
             headers: {
-                'Content-Type': 'application/json',
-                'auth': userId
-            }
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
         });
         if(response.status === 200){
             console.log(response.data);
@@ -45,9 +45,8 @@ const CustomerDetails = () => {
           `${APIs.SEND_PHOTO}/${vehicleId}`,
           formData,
           {
-            headers: {
-                'auth': userId
-            }
+            headers: {},
+            withCredentials: true
         });
         if(response.status === 200){
             console.log(response.data);

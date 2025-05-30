@@ -78,9 +78,10 @@ const AddCustomerForm = () => {
           PhoneNumber: phoneNumber
          }),
         { headers: { 
-          'Content-Type': 'application/json',
-          'auth': userId
-       } }
+          'Content-Type': 'application/json'
+       },
+       withCredentials : true
+      }
       );
 
       if (response.status === 200) {

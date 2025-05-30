@@ -39,8 +39,7 @@ const SetRolePage =() => {
       const response = await axios.put(`${APIs.SET_ROLE}/${selectedUserId}`, 
         { role: newRole },{
             headers: {
-                'Content-Type': 'application/json',
-                'auth': userId
+                'Content-Type': 'application/json'
             },
             withCredentials : true
         } 

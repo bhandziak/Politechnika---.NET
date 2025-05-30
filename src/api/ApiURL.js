@@ -17,7 +17,11 @@ const APIs = {
 //#US6
     GET_ALL_SERVICE_ORDERS: "api/serviceOrder/getAll",
     GET_MECHANICS: "api/user/getMachanics",
-    ADD_SERVICE_ORDER: "api/serviceOrder/createOrder"
+    ADD_SERVICE_ORDER: "api/serviceOrder/createOrder",
+//#US7
+    GET_MECHANICS_SERVICES: "api/serviceOrder/getMechanicsServices",
+    ADD_SERVICE_TASK: "api/serviceOrder/addServiceTask",
+    GET_MECHANICS_TASKS: "api/serviceOrder/getMechanicsTasks"
 }
 
 export default APIs;

@@ -45,9 +45,9 @@ const ServiceOrderPage = () => {
       try {
         const response = await axios.get(APIs.GET_ALL_SERVICE_ORDERS,{
             headers: {
-                'Content-Type': 'application/json',
-                'auth': userId
-            }
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
         });
         if(response.status === 200){
             console.log(response.data)

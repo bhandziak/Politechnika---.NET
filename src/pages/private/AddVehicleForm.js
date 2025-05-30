@@ -22,7 +22,7 @@ const AddVehicleForm = () => {
         model: "",
         vin: "",
         registralNumber: "",
-        year: null
+        year: ""
     });
       const [regexStatus, setRegexStatus] = useState({
         brand: false,
@@ -94,14 +94,15 @@ const AddVehicleForm = () => {
                 YearVehicle: year
             }),
             { headers: { 
-            'Content-Type': 'application/json',
-            'auth': userId
-        } }
+            'Content-Type': 'application/json'
+            },
+            withCredentials: true 
+          }
         );
 
         if (response.status === 200) {
             popUpRef.current?.show(response.data.message);
-            setFormData({brand: "",model: "",vin: "",registralNumber: "",year: null });
+            setFormData({brand: "",model: "",vin: "",registralNumber: "",year: "" });
             setRegexStatus({ brand: false,model: false,vin: false,registralNumber: false,year: false });
         }
         } catch (err) {

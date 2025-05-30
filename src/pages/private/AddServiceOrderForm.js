@@ -49,9 +49,9 @@ const AddServiceOrderForm = () => {
       try {
         const response = await axios.get(APIs.GET_MECHANICS,{
             headers: {
-                'Content-Type': 'application/json',
-                'auth': userId
-            }
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
         });
         if(response.status === 200){
           console.log(response.data)
@@ -89,10 +89,11 @@ const AddServiceOrderForm = () => {
                 Description: description,
                 MechanicId: mechanicId
             }),
-            { headers: { 
-                'Content-Type': 'application/json',
-                'auth': userId
-        } }
+            {headers: { 
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+            }
         );
 
         if (response.status === 200) {
