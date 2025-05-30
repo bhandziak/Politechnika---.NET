@@ -1,6 +1,7 @@
 
 using CarWorkshopProjekt.Data;
 using CarWorkshopProjekt.Helpers;
+using CarWorkshopProjekt.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +78,9 @@ namespace CarWorkshopProjekt
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
             });
+
+            builder.Services.AddScoped<ICustomerService, CustomerService>(); //Service do CustomerController
+
 
             var app = builder.Build();
 

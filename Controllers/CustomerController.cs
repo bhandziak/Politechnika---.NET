@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using CarWorkshopProjekt.Services;
 
 namespace CarWorkshopProjekt.Controllers
 {
@@ -15,20 +16,15 @@ namespace CarWorkshopProjekt.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly ILogger<UserController> _logger;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ICustomerService _validationService; // Services/ICustomerValidationService
 
         public CustomerController(
             AppDbContext context,
-            ILogger< UserController > logger,
-            UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager)
+            ICustomerService validationService // Services
+            )
         {
             _context = context;
-            _logger = logger;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _validationService = validationService; // Services
         }
 
         // GET: api/customer/getCustomers
@@ -52,18 +48,16 @@ namespace CarWorkshopProjekt.Controllers
         [Authorize(Roles = "admin,receptionist")]
         [HttpPost("addCustomer")]
         public async Task<IActionResult> AddCustomer([FromBody] AddCustomer newCustomerDto)
-        {       
-            var nameRegex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,29}$");
-            var surnameRegex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż\-]{1,49}$");
-            var phoneRegex = new Regex(@"^\+48\d{9}$");
-            if (string.IsNullOrWhiteSpace(newCustomerDto.FirstName) || !nameRegex.IsMatch(newCustomerDto.FirstName))
-                return BadRequest("Imię musi zaczynać się wielką literą i zawierać tylko litery.");
+        {
+            // Services
+            if (!_validationService.IsValidFirstName(newCustomerDto.FirstName, out var firstNameError))
+                return BadRequest(firstNameError);
 
-            if (string.IsNullOrWhiteSpace(newCustomerDto.LastName) || !surnameRegex.IsMatch(newCustomerDto.LastName))
-                return BadRequest("Nazwisko musi zaczynać się wielką literą i zawierać tylko litery lub myślnik.");
+            if (!_validationService.IsValidLastName(newCustomerDto.LastName, out var lastNameError))
+                return BadRequest(lastNameError);
 
-            if (string.IsNullOrWhiteSpace(newCustomerDto.PhoneNumber) || !phoneRegex.IsMatch(newCustomerDto.PhoneNumber))
-                return BadRequest("Numer telefonu musi być w formacie +48123456789.");
+            if (!_validationService.IsValidPhoneNumber(newCustomerDto.PhoneNumber, out var phoneError))
+                return BadRequest(phoneError);
 
             //sprawdzenie, czy klient istnieje w bazie (po nr telefonu)
             var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.PhoneNumber == newCustomerDto.PhoneNumber);
@@ -97,21 +91,22 @@ namespace CarWorkshopProjekt.Controllers
                 return NotFound($"Nie znaleziono użytkownika o Id = {customerID}");
             }
 
-            //Sprawdzenie poprawności danych samochodu
-            var brandRegex = new Regex(@"^[A-Z][a-zA-Z\s\-]{1,29}$");
-            var modelRegex = new Regex(@"^[A-Za-z0-9\s\-]{1,30}$");
-            var vinRegex = new Regex(@"^[A-HJ-NPR-Z0-9]{17}$");
-            var registralNumberRegex = new Regex(@"^[A-Z]{2,3}\s?\d{4,5}[A-Z]{0,2}$");
-            if (string.IsNullOrWhiteSpace(newVehicleDto.BrandVehicle) || !brandRegex.IsMatch(newVehicleDto.BrandVehicle))
-                return BadRequest("Marka musi zaczynać się wielką literą i zawierać tylko litery, spacje lub myślniki.");
-            if (string.IsNullOrWhiteSpace(newVehicleDto.ModelVehicle) || !modelRegex.IsMatch(newVehicleDto.ModelVehicle))
-                return BadRequest("Model może zawierać litery, cyfry, spacje i myślniki.");
-            if (string.IsNullOrWhiteSpace(newVehicleDto.VINVehicle) || !vinRegex.IsMatch(newVehicleDto.VINVehicle))
-                return BadRequest("VIN musi składać się z dokładnie 17 znaków (bez I, O, Q).");
-            if (string.IsNullOrWhiteSpace(newVehicleDto.RegistralNumberVehicle) || !registralNumberRegex.IsMatch(newVehicleDto.RegistralNumberVehicle))
-                return BadRequest("Numer rejestracyjny ma nieprawidłowy format.");
-            if (newVehicleDto.YearVehicle < 1850 || newVehicleDto.YearVehicle > 2100)
-                return BadRequest("Rok musi być w zakresie 1850–2100.");
+            // Services
+            if (!_validationService.IsValidBrand(newVehicleDto.BrandVehicle, out var brandError))
+                return BadRequest(brandError);
+
+            if (!_validationService.IsValidModel(newVehicleDto.ModelVehicle, out var modelError))
+                return BadRequest(modelError);
+
+            if (!_validationService.IsValidVIN(newVehicleDto.VINVehicle, out var vinError))
+                return BadRequest(vinError);
+
+            if (!_validationService.IsValidRegistralNumber(newVehicleDto.RegistralNumberVehicle, out var regError))
+                return BadRequest(regError);
+
+            if (!_validationService.IsValidYear(newVehicleDto.YearVehicle, out var yearError))
+                return BadRequest(yearError);
+
 
             //Sprawdzenie, po nr VIN czy klient ma juz taki samochod w bazie (po ServiceOrders, a potem po VINie wszystkich samochodów klienta)
             var existingCustomer = await _context.Customers
@@ -195,37 +190,20 @@ namespace CarWorkshopProjekt.Controllers
         [HttpPost("getDetails/addVehicleImage/{vehicleID}")]
         public async Task<IActionResult> AddVehicleImage(Guid vehicleId, IFormFile photo)
         {
-            // Walidacja pliku
-            if (photo == null || photo.Length == 0)
-                return BadRequest("Plik jest pusty.");
+            if (!_validationService.IsValidImage(photo, out var error))
+                return BadRequest(error);
 
-            var ext = Path.GetExtension(photo.FileName).ToLowerInvariant();
-            var allowedExtensions = new[] { ".jpg", ".png" };
-
-            if (!allowedExtensions.Contains(ext))
-                return BadRequest("Dozwolone formaty: JPG, PNG.");
-
-            // Znajdź pojazd
+            // Szukanie pojazdu
             var vehicle = await _context.Vehicles.FindAsync(vehicleId);
             if (vehicle == null)
                 return NotFound("Pojazd nie istnieje.");
 
             // Zapis pliku
-            var fileName = $"{Guid.NewGuid()}{ext}";
-            var uploadPath = Path.Combine("wwwroot", "uploads");
-            Directory.CreateDirectory(uploadPath);
-            var filePath = Path.Combine(uploadPath, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await photo.CopyToAsync(stream);
-            }
-
-            // Zapis ścieżki
-            vehicle.ImageURL = $"/uploads/{fileName}";
+            var imageUrl = await _validationService.SaveImageAsync(photo);
+            vehicle.ImageURL = imageUrl;
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Obraz zapisany", imageUrl = vehicle.ImageURL });
+            return Ok(new { message = "Dodano zdjęcie pojazdu", imageUrl = vehicle.ImageURL });
         }
 
     }
