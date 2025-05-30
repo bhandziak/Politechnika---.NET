@@ -45,7 +45,6 @@ const CustomerDetails = () => {
           `${APIs.SEND_PHOTO}/${vehicleId}`,
           formData,
           {
-            headers: {},
             withCredentials: true
         });
         if(response.status === 200){
