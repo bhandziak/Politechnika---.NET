@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarWorkshopProjekt.Controllers
 {
@@ -12,33 +14,28 @@ namespace CarWorkshopProjekt.Controllers
     [Route("api/customer")]
     public class CustomerController : ControllerBase
     {
-        private readonly ILogger<CustomerController> _logger;
         private readonly AppDbContext _context;
-        private readonly IAuthHeaderHelper _authHeaderHelper;
+        private readonly ILogger<UserController> _logger;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public CustomerController(ILogger<CustomerController> logger, AppDbContext context, IAuthHeaderHelper authHeaderHelper)
+        public CustomerController(
+            AppDbContext context,
+            ILogger< UserController > logger,
+            UserManager<User> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            _logger = logger;
             _context = context;
-            _authHeaderHelper = authHeaderHelper;
+            _logger = logger;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: api/customer/getCustomers
+        [Authorize(Roles = "admin,receptionist,user,mechanic")]
         [HttpGet("getCustomers")]
         public ActionResult<IEnumerable<Customer>> GetCustomers()
         {
-            // Weryfikacja użytkownika
-            //Pobranie headera i sprawdzenie czy się zgadza
-            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
-                return BadRequest(new { message = error }); ;
-            //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "admin", "receptionist", "user","mechanic" };
-            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
-            if (!verified)
-            {
-                return Unauthorized("Użytkownik nie ma uprawnień do wyświetlenia listy klientów");
-            }
-
             var customers = _context.Customers
             .Select(c => new ReturnCustomer//DTO dla zwrócenia danych klienta
             {
@@ -50,22 +47,12 @@ namespace CarWorkshopProjekt.Controllers
             .ToList();
             return Ok(customers);
         }
+
         // POST: api/customer/addCustomer
+        [Authorize(Roles = "admin,receptionist")]
         [HttpPost("addCustomer")]
         public async Task<IActionResult> AddCustomer([FromBody] AddCustomer newCustomerDto)
-        {
-            // Weryfikacja użytkownika
-            //Pobranie headera i sprawdzenie czy się zgadza
-            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
-                return error;
-            //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "receptionist","admin" };
-            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
-            if (!verified)
-            {
-                return Unauthorized("Użytkownik nie ma uprawnień do dodania nowego klienta");
-            }
-
+        {       
             var nameRegex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,29}$");
             var surnameRegex = new Regex(@"^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż\-]{1,49}$");
             var phoneRegex = new Regex(@"^\+48\d{9}$");
@@ -99,21 +86,10 @@ namespace CarWorkshopProjekt.Controllers
         }
 
         // POST: api/customer/addVehicle/{customerID}
+        [Authorize(Roles = "admin,receptionist")]
         [HttpPost("addVehicle/{customerID}")]
         public async Task<IActionResult> AddVehicle(Guid customerID, [FromBody] AddVehicle newVehicleDto)
-        {
-            // Weryfikacja użytkownika
-            //Pobranie headera i sprawdzenie czy się zgadza
-            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
-                return error;
-            //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "receptionist", "admin" };
-            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
-            if (!verified)
-            {
-                return Unauthorized("Użytkownik nie ma uprawnień do dodania nowego pojazdu klienta");
-            }
-
+        {            
             //Szukanie klienta w bazie
             var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerID);
             if (customer == null)
@@ -150,7 +126,6 @@ namespace CarWorkshopProjekt.Controllers
                 return Conflict("Klient posiada już taki samochód.");
             }
             //Stworzenie nowego samochodu z podanych danych
-            AddServiceOrder serviceOrderDTO;
             var newVehicle = new Vehicle
             {
                 VehicleId = Guid.NewGuid(),
@@ -170,6 +145,7 @@ namespace CarWorkshopProjekt.Controllers
                 CustomerId = customerID,
                 UserId = null,
                 StatusOrder = null,
+                Description = null,
                 DateFinished = null
             };
 
@@ -181,21 +157,10 @@ namespace CarWorkshopProjekt.Controllers
         }
 
         // GET: api/customer/getDetails/{customerID}        
+        [Authorize(Roles = "admin,receptionist,user,mechanic")]
         [HttpGet("getDetails/{customerID}")]
         public async Task<IActionResult> GetDetailsAsync(Guid customerID)
-        {
-            // Weryfikacja użytkownika
-            //Pobranie headera i sprawdzenie czy się zgadza
-            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
-                return BadRequest(new { message = error }); ;
-            //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "admin", "receptionist", "user", "mechanic" };
-            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
-            if (!verified)
-            {
-                return Unauthorized("Użytkownik nie ma uprawnień do wyświetlenia detali klientów");
-            }
-
+        {           
             var customer = await _context.Customers
                 .Where(c => c.CustomerId == customerID)
                 .Select(c => new ReturnAllCustomer
@@ -225,8 +190,9 @@ namespace CarWorkshopProjekt.Controllers
 
             return Ok(customer);
         }
-        // POST: api/customer/getDetails/{customerID}/addVehicleImage
-        [HttpPost("getDetails/{customerID}/addVehicleImage")]
+        // POST: api/customer/getDetails/addVehicleImage/{customerID}
+        [Authorize(Roles = "admin,receptionist,user,mechanic")]
+        [HttpPost("getDetails/addVehicleImage/{customerID}")]
         public async Task<IActionResult> AddVehicleImage(Guid vehicleId, IFormFile photo)
         {
             // Walidacja pliku

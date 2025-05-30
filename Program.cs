@@ -94,7 +94,7 @@ namespace CarWorkshopProjekt
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseStaticFiles(); //obs³uga zdjêæ
 
             app.MapControllers();
 
