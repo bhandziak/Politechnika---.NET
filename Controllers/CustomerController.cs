@@ -170,7 +170,6 @@ namespace CarWorkshopProjekt.Controllers
                 CustomerId = customerID,
                 UserId = null,
                 StatusOrder = null,
-                DateCreated = null,
                 DateFinished = null
             };
 
