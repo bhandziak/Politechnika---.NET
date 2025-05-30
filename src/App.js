@@ -18,6 +18,8 @@ import CustomersPage from "./pages/private/CustomersPage";
 import AddCustomerForm from "./pages/private/AddCustomerForm";
 import CustomerDetails from "./pages/private/CustomerDetails";
 import AddVehicleForm from "./pages/private/AddVehicleForm";
+import ServiceOrderPage from "./pages/private/ServiceOrderPage";
+import AddServiceOrderForm from "./pages/private/AddServiceOrderForm";
 
 
 const App = () => {
@@ -53,6 +55,8 @@ const App = () => {
             <Route element={<RequireAuth allowedRoles={['receptionist', 'admin']} />}>
               <Route path="addcustomer" element={<AddCustomerForm />} />
               <Route path="addvehicle" element={<AddVehicleForm />} />
+              <Route path="serviceorder" element={<ServiceOrderPage />} />
+              <Route path="addserviceorder" element={<AddServiceOrderForm />} />
             </Route>
           </Route>
 

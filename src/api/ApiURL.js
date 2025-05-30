@@ -11,9 +11,12 @@ const APIs = {
 //#US4
     CUSTOMER_DETAILS: "api/customer/getDetails",
     ADD_VEHICLE: "api/customer/addVehicle",
-    SEND_PHOTO: "api/customer/getDetails/addVehicleImage"
-
-
+//#US5
+    SEND_PHOTO: "api/customer/getDetails/addVehicleImage",
+//#US6
+    GET_ALL_SERVICE_ORDERS: "api/serviceOrder/getAll",
+    GET_MECHANICS: "api/user/getMachanics",
+    ADD_SERVICE_ORDER: "api/serviceOrder/createOrder"
 }
 
 export default APIs;
