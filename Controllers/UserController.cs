@@ -6,22 +6,34 @@ using CarWorkshopProjekt.Helpers;
 using CarWorkshopProjekt.DTOs;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 namespace CarWorkshopProjekt.Controllers
 {
     [ApiController]
     [Route("api/user")]
     public class UserController:ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
         private readonly AppDbContext _context;
-        private readonly IAuthHeaderHelper _authHeaderHelper;
+        private readonly ILogger<UserController> _logger;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserController(ILogger<UserController> logger, AppDbContext context, IAuthHeaderHelper authHeaderHelper)
+        public UserController(
+            AppDbContext context,
+            ILogger<UserController> logger,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            _logger = logger;
             _context = context;
-            _authHeaderHelper = authHeaderHelper;
+            _logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
         }
+
         // POST: api/user/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] DTOs.RegisterRequest newUserDto)
@@ -29,30 +41,35 @@ namespace CarWorkshopProjekt.Controllers
             var userRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9\-_#]{4,24}$");
             var passRegex = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*\-]).{8,64}$");
 
-            if (string.IsNullOrWhiteSpace(newUserDto.Login) || !userRegex.IsMatch(newUserDto.Login))
+            if (string.IsNullOrWhiteSpace(newUserDto.UserName) || !userRegex.IsMatch(newUserDto.UserName))
                 return BadRequest("Nieprawidłowy login. Musi zaczynać się od litery, mieć 5-25 znaków i zawierać tylko litery i cyfry.");
 
             if (string.IsNullOrWhiteSpace(newUserDto.Password) || !passRegex.IsMatch(newUserDto.Password))
                 return BadRequest("Nieprawidłowe hasło. Musi mieć 8-64 znaki, zawierać wielką literę, małą literę, cyfrę i znak specjalny.");
 
             // Sprawdź, czy użytkownik istnieje w bazie
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Login == newUserDto.Login);
-            if (existingUser != null)
-                return Conflict("Użytkownik o takim loginie już istnieje.");
+            var userExists = await _userManager.FindByNameAsync(newUserDto.UserName);
+            if (userExists != null)
+                return BadRequest("Użytkownik o takim loginie już istnieje.");
 
-            // Hashowanie hasła własną metodą
-            string hashedPassword = PasswordHasher.HashPassword(newUserDto.Password);
-
-            // Stwórz nowego użytkownika
             var newUser = new User
             {
-                UserId = Guid.NewGuid(),
-                Login = newUserDto.Login,
-                Password = hashedPassword
+                UserName = newUserDto.UserName,
+                Email = newUserDto.UserName,
+                EmailConfirmed = true
             };
 
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
+            var result = await _userManager.CreateAsync(newUser, newUserDto.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            // nowa rola "user"
+            if (!await _roleManager.RoleExistsAsync("admin"))
+                await _roleManager.CreateAsync(new IdentityRole("admin"));
+
+            // przypisz role
+            await _userManager.AddToRoleAsync(newUser, "admin");
 
             return Ok(new { message = "Użytkownik zarejestrowany pomyślnie." });
         }
@@ -61,24 +78,27 @@ namespace CarWorkshopProjekt.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] DTOs.LoginRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password))
+            if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest("Login i hasło są wymagane.");
 
-            // Znajdź użytkownika po loginie
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Login == request.Login);
+            // Znajdź użytkownika
+            var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
                 return Unauthorized("Nieprawidłowy login lub hasło.");
 
-            // Sprawdź hasło za pomocą klasy PasswordHasher
-            bool isValid = PasswordHasher.VerifyPassword(request.Password, user.Password);
-            if (!isValid)
+            // Sprawdź hasło
+            var result = await _signInManager.PasswordSignInAsync(user, request.Password, isPersistent: false, lockoutOnFailure: false);
+            if (!result.Succeeded)
                 return Unauthorized("Nieprawidłowy login lub hasło.");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault() ?? "user";
 
             var userToSend = new
             {
-                Login = user.Login,
-                Role = user.Role,
-                Id = user.UserId
+                Login = user.UserName,
+                Id = user.Id,
+                Role = role
             };
 
             return Ok(new
@@ -88,61 +108,65 @@ namespace CarWorkshopProjekt.Controllers
             });
         }
 
-        // GET: api/user/getAllUsers
-        [HttpGet("getAllUsers")]
-        public IActionResult GetAllUsers()
+        // GET: api/user/logout
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
         {
-            //Pobranie headera i sprawdzenie czy się zgadza
-            if (!_authHeaderHelper.TryGetUserId(Request, out Guid userId, out IActionResult error))
-                return error;
-            //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "admin" };
-            var verified = UserVerification.VerifyUser(userId, _context, allowedRoles);//sprawdzenie po roli usera
-            if (!verified)
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Pomyślnie wylogowano." });
+        }
+
+        // GET: api/user/getAllUsers
+        [Authorize(Roles = "admin")]
+        [HttpGet("getAllUsers")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = _userManager.Users.ToList();
+            var userList = new List<object>();
+
+            foreach (var user in users)
             {
-                return Unauthorized("Użytkownik nie ma uprawnień do wyświetlenia zasobu");
+                var roles = await _userManager.GetRolesAsync(user);
+                userList.Add(new
+                {
+                    userId = user.Id,
+                    login = user.UserName,
+                    role = roles.FirstOrDefault() ?? "none"
+                });
             }
 
-            var users = _context.Users
-                .Select(u => new ReturnUser
-                {
-                    UserId = u.UserId,
-                    Login = u.Login,
-                    Role = u.Role
-                }).ToList();
-            return Ok(new { Users = users });
+            return Ok(new { users = userList });
         }
 
         // PUT: api/user/setRole/{userId}
+        [Authorize(Roles = "admin")]
         [HttpPut("setRole/{userId}")]
-        public IActionResult SetRole(Guid userId, [FromBody] RoleUpdateRequest request)
+        public async Task<IActionResult> SetRole(string userId, [FromBody] RoleUpdateRequest request)
         {
-            // Weryfikacja użytkownika
-            //Pobranie headera i sprawdzenie czy się zgadza
-            if (!_authHeaderHelper.TryGetUserId(Request, out Guid thisuserId, out IActionResult error))
-                return error;
-            //Tablica z zezwolonymi rolami do autoryzacji
-            var allowedRoles = new[] { "admin" };
-            var verified = UserVerification.VerifyUser(thisuserId, _context, allowedRoles);//sprawdzenie po roli usera
-            if (!verified)
-            {
-                return Unauthorized("Użytkownik nie ma uprawnień do zmiany roli");
-            }
 
             //Szukanie użytkownia w bazie do zmiany roli
-            var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-            {
                 return NotFound($"Nie znaleziono użytkownika o Id = {userId}");
-            }
 
-            //Aktualizacja roli
-            user.Role = request.Role;
+            // Czy rola istnieje?
+            if (!await _roleManager.RoleExistsAsync(request.Role))
+                await _roleManager.CreateAsync(new IdentityRole(request.Role));
 
-            _context.SaveChanges();
+            // Wszyskie role użytkownika
+            var currentRoles = await _userManager.GetRolesAsync(user);
 
-            //Odpowiedz servera
-            return Ok(new { Message = $"Rola użytkownika {user.Login} została zmieniona na '{request.Role}'." });
+            // Usuwanie starych ról
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+                return StatusCode(500, "Błąd przy usuwaniu aktualnych ról użytkownika.");
+
+            // Dodanie nowej roli
+            var addResult = await _userManager.AddToRoleAsync(user, request.Role);
+            if (!addResult.Succeeded)
+                return StatusCode(500, "Błąd przy dodawaniu nowej roli użytkownikowi.");
+
+            return Ok(new { Message = $"Rola użytkownika {user.UserName} została zmieniona na '{request.Role}'." });
         }
     }
 }

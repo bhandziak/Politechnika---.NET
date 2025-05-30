@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarWorkshopProjekt.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
@@ -14,7 +16,7 @@ namespace CarWorkshopProjekt.Data
         public DbSet<UsedPart> UsedParts { get; set; }
         public DbSet<Part> Parts { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<User> Users { get; set; }
+        // public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,11 +82,6 @@ namespace CarWorkshopProjekt.Data
 
 
 
-        // Domyślne wartości danych
-
-            modelBuilder.Entity<User>()
-                .Property(u => u.Role)
-                .HasDefaultValue("user");
         }
     }
 }
