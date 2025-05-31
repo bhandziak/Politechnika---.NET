@@ -71,6 +71,7 @@ const ServiceOrderPage = () => {
               <th className='dataTh'>Status</th>
               <th className='dataTh'>Completion date</th>
               <th className='dataTh'></th>
+              <th className='dataTh'></th>
             </tr>
           </thead>
           <tbody>
@@ -93,6 +94,14 @@ const ServiceOrderPage = () => {
                           <LinkButton webpath={`/addserviceorder`} name='Add Order' stateObj={so} />
                           :
                           <></>
+                    }
+                  </td>
+                  <td className='dataTd'>
+                    {
+                      so.statusOrder != null ? // zlecenie stworzone
+                      <LinkButton webpath={`/comment`} name='Comments' stateObj={so} />
+                      :
+                      <></>
                     }
                   </td>
                 </tr>
