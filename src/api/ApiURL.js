@@ -24,7 +24,9 @@ const APIs = {
     GET_MECHANICS_TASKS: "api/serviceOrder/getMechanicsTasks",
 //#US8
     GET_ALL_PARTS: "api/part/getAll",
-    SET_PART: "api/serviceTask/setPart"
+    SET_PART: "api/serviceTask/setPart",
+//#US9
+    SET_STATUS: "api/serviceOrder/setStatus"
 }
 
 export default APIs;

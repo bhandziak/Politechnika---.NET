@@ -11,7 +11,7 @@ const ServiceOrderDetails = () => {
   const location = useLocation();
   const { userId, role } = useContext(AuthContext);
   const so = location.state;
-  const [parts, setParts] = useState([]);
+  const [statusOrder, setStatusOrder] = useState(so.statusOrder);
   const [serviceTasks, setServiceTasks] = useState(
     [
       {
@@ -82,7 +82,7 @@ const ServiceOrderDetails = () => {
         withCredentials: true
       });
       if (response.status === 200) {
-        console.log(response.data)
+        console.log(response.data);
         setServiceTasks(response.data);
       }
 
@@ -91,17 +91,23 @@ const ServiceOrderDetails = () => {
     }
   };
 
-  const fetchParts = async () => {
+  const setStatus = async (status) => {
     try {
-      const response = await axios.get(APIs.GET_ALL_PARTS, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      });
+      const ServiceOrderId = so.serviceOrderId;
+      const response = await axios.put(`${APIs.SET_STATUS}/${ServiceOrderId}`,
+        JSON.stringify({
+          Status: status
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        });
       if (response.status === 200) {
-        console.log(response.data)
-        setParts(response.data);
+        console.log(response.data);
+        popUpRef.current?.show(response.data.message);
+        setStatusOrder(status);
       }
 
     } catch (err) {
@@ -109,9 +115,9 @@ const ServiceOrderDetails = () => {
     }
   }
 
+
   useEffect(() => {
     fetchServiceTasks();
-    fetchParts();
   }, []);
 
 
@@ -124,16 +130,19 @@ const ServiceOrderDetails = () => {
         <div ><span className='highlight'>Car info: </span>{so.vehicle.brandVehicle} {so.vehicle.modelVehicle} {so.vehicle.registralNumberVehicle}</div>
         <div ><span className='highlight'>Description: </span>{so.description}</div>
         <div ><span className='highlight'>Mechanic: </span>{so.mechanic?.userName}</div>
-        <div ><span className='highlight'>Status: </span>{so.statusOrder}</div>
-        {console.log(userId, so.mechanic?.userId)}
-        {
-          userId == so.mechanic?.id ? //tylko przypisany mechanik może dodawać Service Task
+        <div ><span className='highlight'>Status: </span>{statusOrder}</div>
+      </div>
+      <div id='btnLayout'>
+        { // tylko przypisany mechanik lub admin może zmienić status | tylko mechanik może dodać taska
+          ["Nowe", "W trakcie"].includes(statusOrder) && (userId === so.mechanic?.id || role === "admin") && (
             <>
-              <br />
-              <LinkButton webpath={`/addservicetask`} name='Add Service Task' stateObj={so} />
+              {userId === so.mechanic?.id && (
+                <LinkButton webpath={`/addservicetask`} name='Add Service Task' stateObj={so} />
+              )} 
+              <button className="navButton" onClick={() => setStatus("Zakonczone")}>Complete Order</button>
+              <button className="navButton" onClick={() => setStatus("Anulowane")}>Cancel Order</button>
             </>
-            :
-            <></>
+          )
         }
       </div>
 
@@ -164,8 +173,8 @@ const ServiceOrderDetails = () => {
                       :
                       userId == so.mechanic?.id ? //tylko przypisany mechanik może dodawać Part
                         <LinkButton webpath={`/addusedpart`} name='Add Part' stateObj={st} />
-                      :
-                      "-"
+                        :
+                        "-"
                   }
                 </td>
                 <td className='dataTd'>{st.quantity}</td>
