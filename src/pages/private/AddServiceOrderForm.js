@@ -138,7 +138,7 @@ const AddServiceOrderForm = () => {
                 onClick={() =>  popUpRef.current?.hide()}
                 onChange={handleChange}
                 >
-                {mechanics.map(m => (
+                {mechanics != null && mechanics.map(m => (
                     <option key={m.mechanicId} value={m.mechanicId}>{m.userName}</option>
                 ))}
             </select>

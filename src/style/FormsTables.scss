@@ -1,25 +1,25 @@
 @use './variables' as vars;
 
-.content{
+.content {
     padding: 2rem;
     display: flex;
     justify-content: center;
 }
 
-.contentColumn{
+.contentColumn {
     padding: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.dataTable{
+.dataTable {
     width: 100%;
-    max-width: 800px;;
+    max-width: 800px;
     border-collapse: collapse;
     text-align: center;
-      margin-left: auto;
-  margin-right: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .dataTr {
@@ -38,26 +38,26 @@
 }
 
 select {
-  padding: 8px 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid vars.$secondary-color;
-  background-color: vars.$panel-color;
-  color: vars.$btn-color;
-  outline: none;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid vars.$secondary-color;
+    background-color: vars.$panel-color;
+    color: vars.$btn-color;
+    outline: none;
 }
 
-#btnLayout{
-width: 100%;
+#btnLayout {
+    width: 100%;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: vars.$btn-color;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: vars.$btn-color;
 }

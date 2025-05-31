@@ -22,6 +22,7 @@ import ServiceOrderPage from "./pages/private/ServiceOrderPage";
 import AddServiceOrderForm from "./pages/private/AddServiceOrderForm";
 import AddServiceTaskForm from "./pages/private/AddServiceTaskForm";
 import ServiceOrderDetails from "./pages/private/ServiceOrderDetails";
+import AddUsedPartForm from "./pages/private/AddUsedPartForm";
 
 
 const App = () => {
@@ -69,6 +70,7 @@ const App = () => {
             {/* Only Mechanic */}
             <Route element={<RequireAuth allowedRoles={['mechanic']} />}>
               <Route path="addservicetask" element={<AddServiceTaskForm />} />
+              <Route path="addusedpart" element={<AddUsedPartForm />} />
             </Route>
           </Route>
 

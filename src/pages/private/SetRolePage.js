@@ -14,8 +14,7 @@ const SetRolePage =() => {
       try {
         const response = await axios.get(APIs.GET_ALL_USERS,{
             headers: {
-                'Content-Type': 'application/json',
-                'auth': userId
+                'Content-Type': 'application/json'
             },
             withCredentials: true
         });
