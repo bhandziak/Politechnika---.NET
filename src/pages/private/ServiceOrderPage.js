@@ -53,8 +53,8 @@ const ServiceOrderPage = () => {
         {
           role == "mechanic" ?
             <div id='btnLayout'>
-              <button className={currentBtnAction == "My Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToMyOrders}>My Orders</button>
-              <button className={currentBtnAction == "All Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToAllOrders}>All Orders</button>
+              <button className={currentBtnAction == "My Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToMyOrders}>My Services</button>
+              <button className={currentBtnAction == "All Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToAllOrders}>All Services</button>
             </div>
             :
             <></>

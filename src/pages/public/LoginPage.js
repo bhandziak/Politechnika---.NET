@@ -16,7 +16,7 @@ const LoginPage = () => {
         login: "",
         password: ""
     });
-    
+
 
     const handleChange = (event) => {
         popUpRef.current?.hide();
@@ -51,7 +51,7 @@ const LoginPage = () => {
             );
 
             const res = response.data;
-            
+
             console.log(res);
 
             if (response.status === 200) {
@@ -67,7 +67,7 @@ const LoginPage = () => {
                     role: userData.role
                 }));
 
-                navigate("/comment");
+                navigate("/home");
             }
 
         } catch (err) {

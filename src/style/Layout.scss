@@ -1,6 +1,6 @@
 @use './variables' as vars;
 
-#navigationPanel{
+#navigationPanel {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
     color: vars.$btn-color;
 }
 
-#rightSide{
+#rightSide {
     margin-left: auto;
     display: flex;
     align-items: center;
@@ -21,39 +21,39 @@
 }
 
 .highlight {
-  color: vars.$link-color;
-  font-weight: 600;
+    color: vars.$link-color;
+    font-weight: 600;
 }
 
 #userInfo {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.2;
-  color: vars.$btn-color;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: vars.$btn-color;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
 }
 
-#userInfo2{
-width: 100%;
+#userInfo2 {
+    width: 100%;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: vars.$btn-color;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: vars.$btn-color;
 }
 
 .navButton {
     background-color: rgba(0, 0, 0, 0);
-    border: none ;
+    border: none;
     border-radius: 20px;
     font-size: 18px;
     padding: 4px 30px 4px 30px;
@@ -73,23 +73,24 @@ width: 100%;
     cursor: pointer;
 }
 
-.navButtonActive{
+.navButtonActive {
     background-color: vars.$btn-active-color;
 }
-.navButtonActive:hover{
+
+.navButtonActive:hover {
     background-color: vars.$btn-hover-color;
 }
 
-.navButton:hover{
+.navButton:hover {
     background-color: vars.$primary-color;
     color: vars.$bk-color;
 }
 
-.navButton:active{
+.navButton:active {
     filter: brightness(0.8);
 }
 
-#layoutContext{
+#layoutContext {
     padding: "1rem";
     background-color: vars.$bk-color;
     height: 100%;

@@ -7,7 +7,7 @@ const RedirectIfAuth = ({ children }) => {
 
   if (loading) return null;
 
-  return userId ? <Navigate to="/comment" replace /> : children;
+  return userId ? <Navigate to="/home" replace /> : children;
 };
 
 export default RedirectIfAuth;

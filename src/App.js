@@ -23,6 +23,7 @@ import AddServiceOrderForm from "./pages/private/AddServiceOrderForm";
 import AddServiceTaskForm from "./pages/private/AddServiceTaskForm";
 import ServiceOrderDetails from "./pages/private/ServiceOrderDetails";
 import AddUsedPartForm from "./pages/private/AddUsedPartForm";
+import HomePage from "./pages/private/HomePage";
 
 
 const App = () => {
@@ -46,6 +47,7 @@ const App = () => {
             {/* All users */}
             <Route element={<RequireAuth allowedRoles={['admin', 'mechanic', 'receptionist', 'user']} />}>
               <Route path="comment" element={<CommentPage />} />
+              <Route path="home" element={<HomePage />} />
               <Route path="customers" element={<CustomersPage />} />
               <Route path="details/:customerId" element={<CustomerDetails />} />
             </Route>
@@ -62,7 +64,7 @@ const App = () => {
             </Route>
 
             {/* Only Mechanic, Receptionist, Admin */}
-            <Route element={<RequireAuth allowedRoles={['mechanic','receptionist', 'admin']} />}>
+            <Route element={<RequireAuth allowedRoles={['mechanic', 'receptionist', 'admin']} />}>
               <Route path="serviceorder" element={<ServiceOrderPage />} />
               <Route path="serviceorderdetails" element={<ServiceOrderDetails />} />
             </Route>

@@ -33,7 +33,7 @@ const AuthProvider = ({ children }) => {
       userId,
       role,
       setAuth,
-      loading 
+      loading
     }}>
       {children}
     </AuthContext.Provider>

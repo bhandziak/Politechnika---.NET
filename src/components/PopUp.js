@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, forwardRef, useState, useEffect  } from 'react';
+import React, { useImperativeHandle, forwardRef, useState, useEffect } from 'react';
 
 const PopUp = forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false);

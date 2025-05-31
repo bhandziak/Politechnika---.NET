@@ -1,4 +1,4 @@
-import React, { useState, useRef,useContext  } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider";
 import PopUp from "../../components/PopUp";
 import axios from "../../api/axios";
@@ -72,16 +72,17 @@ const AddCustomerForm = () => {
 
     try {
       const response = await axios.post(APIs.ADD_CUSTOMER,
-        JSON.stringify({ 
+        JSON.stringify({
           NameCustomer: name,
           SurnameCustomer: surname,
           PhoneNumber: phoneNumber
-         }),
-        { headers: { 
-          'Content-Type': 'application/json'
-       },
-       withCredentials : true
-      }
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
       );
 
       if (response.status === 200) {
@@ -97,23 +98,23 @@ const AddCustomerForm = () => {
 
   return (
     <div className="content">
-      
+
       <form className="loginPanel">
         <h3>Add Customer</h3>
-        
-          <ValidatedInput 
-            htmlName={"name"}
-            labelText="Name"
-            formData={formData.name}
-            regexStatus = {regexStatus.name}
-            formFocus = {formFocus.name}
-            type="text"
-            handleChange = {handleChange}
-            handleFocusOn = {handleFocusOn}
-            validationText={<>Imię musi zaczynać się wielką literą i zawierać tylko litery.</>}
-            />
 
-        <ValidatedInput 
+        <ValidatedInput
+          htmlName={"name"}
+          labelText="Name"
+          formData={formData.name}
+          regexStatus={regexStatus.name}
+          formFocus={formFocus.name}
+          type="text"
+          handleChange={handleChange}
+          handleFocusOn={handleFocusOn}
+          validationText={<>Imię musi zaczynać się wielką literą i zawierać tylko litery.</>}
+        />
+
+        <ValidatedInput
           htmlName="surname"
           labelText="Surname"
           formData={formData.surname}
@@ -126,7 +127,7 @@ const AddCustomerForm = () => {
             <>Nazwisko musi zaczynać się wielką literą i zawierać tylko litery lub myślnik.</>
           }
         />
-        <ValidatedInput 
+        <ValidatedInput
           htmlName="phoneNumber"
           labelText="Phone Number"
           formData={formData.phoneNumber}

@@ -138,7 +138,7 @@ const ServiceOrderDetails = () => {
             <>
               {userId === so.mechanic?.id && (
                 <LinkButton webpath={`/addservicetask`} name='Add Service Task' stateObj={so} />
-              )} 
+              )}
               <button className="navButton" onClick={() => setStatus("Zakonczone")}>Complete Order</button>
               <button className="navButton" onClick={() => setStatus("Anulowane")}>Cancel Order</button>
             </>

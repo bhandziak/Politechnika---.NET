@@ -12,7 +12,7 @@ const PASS_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,
 
 const RegisterPage = () => {
   const popUpRef = useRef();
-  
+
   const [formData, setFormData] = useState({
     login: "",
     password: "",
@@ -88,9 +88,10 @@ const RegisterPage = () => {
 
     try {
       const data = await axios.post(APIs.REGISTER,
-        JSON.stringify({ 
-            UserName: login,
-            Password: password }),
+        JSON.stringify({
+          UserName: login,
+          Password: password
+        }),
         { headers: { 'Content-Type': 'application/json' } }
       );
 

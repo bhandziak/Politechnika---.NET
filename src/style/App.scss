@@ -1,20 +1,21 @@
 @use './variables' as vars;
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     font-family: "Gill Sans", sans-serif;
     color: vars.$secondary-color;
 }
 
-#root{
+#root {
     height: 100%;
     width: 100%;
 }
 
 
 
-#mainRegisterLoginPage{
+#mainRegisterLoginPage {
     height: 100%;
     display: flex;
     justify-content: center;
@@ -28,27 +29,28 @@ html, body {
     font-size: 40px;
 }
 
-.bottomText{
+.bottomText {
     position: absolute;
     top: 100%;
     transform: translate(0, -300%);
     margin: 30px;
 }
 
-.logoAndText{
+.logoAndText {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     width: 60%;
     height: 60%;
 }
-.highlightText{
+
+.highlightText {
     font-size: 25px;
     color: vars.$primary-color;
 }
 
 
-#mainloginPage{
+#mainloginPage {
     flex-direction: column-reverse;
 }
 
@@ -61,7 +63,7 @@ html, body {
     padding: 50px 0 50px 0;
     background-color: antiquewhite;
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: vars.$panel-color;
@@ -69,22 +71,22 @@ html, body {
     border-radius: 15px;
 }
 
-.panel404{
+.panel404 {
     width: 800px;
     height: 500px;
-    justify-content:center;
+    justify-content: center;
     background-color: transparent;
 }
 
-.errorFont{
+.errorFont {
     font-size: 150px;
     margin: 10px;
 }
 
-.btn2.btn404{
+.btn2.btn404 {
     margin-top: 30px;
     text-decoration: none;
-    
+
 }
 
 .textInput {
@@ -93,31 +95,32 @@ html, body {
     transition: 0.5s;
     height: 25px;
     width: 225px;
-    text-align: center; 
+    text-align: center;
     outline: none;
     font-size: 18px;
     background-color: vars.$bk-color;
     color: vars.$secondary-color;
 }
 
-.textInput:focus, .textInput:hover {
+.textInput:focus,
+.textInput:hover {
     border: solid 2px vars.$primary-color;
 }
 
 
 
-a{
+a {
     color: vars.$link-color;
     font-weight: 700;
     transition: 0.2s;
 }
 
-a:hover{
+a:hover {
     color: vars.$primary-color;
 }
 
-.btn{
-    border: none ;
+.btn {
+    border: none;
     border-radius: 3px;
     font-size: 18px;
     padding: 4px 30px 4px 30px;
@@ -128,21 +131,21 @@ a:hover{
     cursor: pointer;
 }
 
-.btn:hover{
+.btn:hover {
     background-color: vars.$primary-color;
     color: vars.$bk-color;
 }
 
-.btn:active{
+.btn:active {
     filter: brightness(0.8);
 }
 
 label {
     font-size: 12px;
-    font-style:italic;
+    font-style: italic;
 }
 
-.popUp{
+.popUp {
     position: fixed;
     top: 35%;
     left: 50%;
@@ -168,17 +171,17 @@ label {
     content: "\00d7";
 }
 
-.closeBtn:hover{
+.closeBtn:hover {
     color: vars.$bk-color;
 }
 
-.closeBtnBox{
+.closeBtnBox {
     display: flex;
     flex-direction: row-reverse;
 }
 
 
-.validationBox{
+.validationBox {
     width: 325px;
     text-align: center;
     color: vars.$btn-color;
@@ -189,10 +192,10 @@ label {
     padding: 4px;
 }
 
-.correctValidation{
+.correctValidation {
     color: green;
 }
 
-.wrongValidation{
+.wrongValidation {
     color: red;
 }
