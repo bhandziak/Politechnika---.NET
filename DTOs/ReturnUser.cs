@@ -2,8 +2,8 @@
 {
     public class ReturnUser
     {
-        public Guid UserId { get; set; }
-        public string Login { get; set; }
+        public String Id { get; set; }
+        public string UserName { get; set; }
         public string Role { get; set; }
         //bez info o komentarzach i zamowieniach
     }

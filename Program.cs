@@ -81,6 +81,7 @@ namespace CarWorkshopProjekt
 
             builder.Services.AddScoped<ICustomerService, CustomerService>(); //Service do CustomerController
             builder.Services.AddScoped<IUserService, UserService>(); //Service do UserController
+            builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>(); // Service do ServiceOrder
 
 
             var app = builder.Build();

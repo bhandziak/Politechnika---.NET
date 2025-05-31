@@ -128,14 +128,14 @@ namespace CarWorkshopProjekt.Controllers
                 {
                     mechanicsList.Add(new
                     {
-                        userId = user.Id,
+                        mechanicId = user.Id,
                         userName = user.UserName,
                         role = "mechanic"
                     });
                 }
             }
 
-            return Ok(new { users = mechanicsList });
+            return Ok(new { mechanics = mechanicsList });
         }
     }
 }

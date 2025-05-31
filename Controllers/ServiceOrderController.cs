@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using CarWorkshopProjekt.Services;
 using CarWorkshopProjekt.Mappers;
+using System.Threading.Tasks;
 
 namespace CarWorkshopProjekt.Controllers
 {
@@ -17,16 +18,19 @@ namespace CarWorkshopProjekt.Controllers
     public class ServiceOrderController: ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly ServiceOrderMapper _serviceOrderMapper = new(); //Mapperly vehicle
+        private readonly ServiceOrderMapper _serviceOrderMapper = new();
+        private readonly IServiceOrderService _serviceOrderService;
         private readonly UserManager<User> _userManager;
         public ServiceOrderController(
             AppDbContext context,
             ICustomerService customerService, // Services
+            IServiceOrderService serviceOrderService,
             UserManager<User> userManager
             )
         {
             _context = context;
             _userManager = userManager;
+            _serviceOrderService = serviceOrderService;
         }
         //Enum ze stanami ServiceOrder
         public enum OrderStatus
@@ -40,16 +44,14 @@ namespace CarWorkshopProjekt.Controllers
         // GET: api/serviceOrder/getAll
         [Authorize(Roles = "admin,receptionist,user,mechanic")]
         [HttpGet("getAll")]
-        public ActionResult<IEnumerable<ServiceOrder>> GetAll()
+        public async Task<ActionResult<IEnumerable<ServiceOrder>>> GetAll()
         {
-            var serviceOrders = _context.ServiceOrders.ToList(); // pobranie encji
-            var returnDtos = _serviceOrderMapper.ToReturnDtoList(serviceOrders); // mapowanie do DTO
-
-            return Ok(returnDtos);
+            var result = await _serviceOrderService.GetAllAsync();
+            return Ok(result);
         }
 
         // PUT: api/serviceOrder/createOrder 
-        [Authorize(Roles = "admin,receptionist")] //SPRAWDZIĆ ROLE!!
+        [Authorize(Roles = "admin,receptionist")]
         [HttpPut("createOrder")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateServiceOrder serviceOrderDTO)
         {
@@ -71,22 +73,21 @@ namespace CarWorkshopProjekt.Controllers
         }
 
         // GET: api/serviceOrder/getMechanicsServices
-        [Authorize(Roles = "admin,receptionist,mechanic")] //SPRAWDZIĆ ROLE!!
+        [Authorize(Roles = "mechanic")]
         [HttpGet("getMechanicsServices")]
         public async Task<ActionResult<IEnumerable<ServiceOrder>>> GetMechanicsServicesAsync()
         {
-            var appUser = await _userManager.GetUserAsync(User);
-            if (appUser == null)
+            var appMechanic = await _userManager.GetUserAsync(User);
+            if (appMechanic == null)
             {
                 return Unauthorized();
             }
 
-            var serviceOrders = await _context.ServiceOrders
-                .Where(so => so.UserId == appUser.Id && so.StatusOrder != null)
-                .ToListAsync();
-            var returnDtos = _serviceOrderMapper.ToReturnDtoList(serviceOrders); // mapowanie do DTO
+            var result = await _serviceOrderService.GetAllAsync();
 
-            return Ok(returnDtos);
+            var filteredResult = result.Where(so => so.Mechanic != null && so.Mechanic.Id == appMechanic.Id);
+
+            return Ok(filteredResult);
         }
 
 
