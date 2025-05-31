@@ -16,7 +16,7 @@ const APIs = {
     SEND_PHOTO: "api/customer/getDetails/addVehicleImage",
 //#US6
     GET_ALL_SERVICE_ORDERS: "api/serviceOrder/getAll",
-    GET_MECHANICS: "api/user/getMachanics",
+    GET_MECHANICS: "api/user/getMechanics",
     ADD_SERVICE_ORDER: "api/serviceOrder/createOrder",
 //#US7
     GET_MECHANICS_SERVICES: "api/serviceOrder/getMechanicsServices",

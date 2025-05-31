@@ -8,66 +8,58 @@ import LinkButton from '../../components/LinkButton';
 const ServiceOrderPage = () => {
     const popUpRef = useRef();
     const { userId, role } = useContext(AuthContext);
-    const [serviceOrders, setServiceOrders] = useState([
-  {
-    serviceOrderId: 1,
-    customer: {
-      nameCustomer: "Jan",
-      surnameCustomer: "Kowalski"
-    },
-    vehicle: {
-      brandVehicle: "Toyota",
-      modelVehicle: "Corolla",
-      registralNumberVehicle: "WX12345"
-    },
-    description: "Wymiana klocków hamulcowych",
-    mechanic: "Marek Nowak",
-    statusOrder: null
-  },
-  {
-    serviceOrderId: 2,
-    customer: {
-      nameCustomer: "Anna",
-      surnameCustomer: "Nowak"
-    },
-    vehicle: {
-      brandVehicle: "Ford",
-      modelVehicle: "Focus",
-      registralNumberVehicle: "KR54321"
-    },
-    description: "Przegląd okresowy",
-    mechanic: "Paweł Wiśniewski",
-    statusOrder: 'Nowy'
-  }
-]);
+    const [serviceOrders, setServiceOrders] = useState([]);
+    const [API_URL, setAPI_URL] = useState(APIs.GET_ALL_SERVICE_ORDERS);
+    const [currentBtnAction, setCurrentBtnAction] = useState( "All Orders");
+
+    const switchToMyOrders = () => {
+      setAPI_URL(APIs.GET_MECHANICS_SERVICES);
+      setCurrentBtnAction("My Orders");
+    }
+
+    const switchToAllOrders = () => {
+        setAPI_URL(APIs.GET_ALL_SERVICE_ORDERS);
+        setCurrentBtnAction("All Orders");
+    }   
 
     const fetchServiceOrders = async () => {
       try {
-        const response = await axios.get(APIs.GET_ALL_SERVICE_ORDERS,{
+        const response = await axios.get(API_URL,{
             headers: {
                 'Content-Type': 'application/json'
             },
             withCredentials: true
         });
         if(response.status === 200){
+            console.log("Services orders:");
             console.log(response.data)
             setServiceOrders(response.data);
         }
 
       } catch (err) {
-        popUpRef.current?.show(err.response.data || err.message);
+        popUpRef.current?.show(err.response?.data || err.message);
       }
     };
 
     useEffect(() => {
-      fetchServiceOrders();
-  }, []);
+    fetchServiceOrders();
+    }, [API_URL]);
 
   return (
     <div className='contentColumn'>
 
         <PopUp ref={popUpRef} />
         <div style={{'width': '100%'}}>
+          {
+            role == "mechanic" ?
+              <div id='btnLayout'>
+              <button className={currentBtnAction == "My Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToMyOrders}>My Orders</button>
+              <button className={currentBtnAction == "All Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToAllOrders}>All Orders</button>
+              </div>
+            :
+              <></>
+          }
+
       <table className='dataTable'>
         <thead>
           <tr className='dataTr'>
@@ -77,6 +69,7 @@ const ServiceOrderPage = () => {
             <th className='dataTh'>Description</th>
             <th className='dataTh'>Mechanic</th>
             <th className='dataTh'>Status</th>
+            <th className='dataTh'></th>
           </tr>
         </thead>
         <tbody>
@@ -86,13 +79,17 @@ const ServiceOrderPage = () => {
               <td className='dataTd'>{so.customer.nameCustomer} {so.customer.surnameCustomer}</td>
               <td className='dataTd'>{so.vehicle.brandVehicle} {so.vehicle.modelVehicle} {so.vehicle.registralNumberVehicle}</td>
               <td className='dataTd'>{so.description}</td>
-              <td className='dataTd'>{so.mechanic}</td>
+              <td className='dataTd'>{so.mechanic?.userName}</td>
+              <td className='dataTd'>{so.statusOrder}</td>
               <td className='dataTd'>
                 {
-                    so.statusOrder == null ?
-                    <LinkButton webpath={`/addserviceorder`} name='Add Order' stateObj={so}/>
-                    :
-                    so.statusOrder
+                    so.statusOrder != null ? // zlecenie stworzone
+                      <LinkButton webpath={`/serviceorderdetails`} name='Details' stateObj={so}/>
+                    :  // jeszcze niestworzone zlecenie
+                      ['receptionist', 'admin'].includes(role) ?
+                        <LinkButton webpath={`/addserviceorder`} name='Add Order' stateObj={so}/>
+                      :
+                        <></>
                 }
               </td>
             </tr>

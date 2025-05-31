@@ -62,7 +62,7 @@ const SetRolePage =() => {
           <tr className='dataTr'>
             <th className='dataTh'>Nr.</th>
             <th className='dataTh'>Login</th>
-            <th className='dataTh'>Rola</th>
+            <th className='dataTh'>Role</th>
           </tr>
         </thead>
         <tbody>

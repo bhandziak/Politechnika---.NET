@@ -20,6 +20,8 @@ import CustomerDetails from "./pages/private/CustomerDetails";
 import AddVehicleForm from "./pages/private/AddVehicleForm";
 import ServiceOrderPage from "./pages/private/ServiceOrderPage";
 import AddServiceOrderForm from "./pages/private/AddServiceOrderForm";
+import AddServiceTaskForm from "./pages/private/AddServiceTaskForm";
+import ServiceOrderDetails from "./pages/private/ServiceOrderDetails";
 
 
 const App = () => {
@@ -55,8 +57,18 @@ const App = () => {
             <Route element={<RequireAuth allowedRoles={['receptionist', 'admin']} />}>
               <Route path="addcustomer" element={<AddCustomerForm />} />
               <Route path="addvehicle" element={<AddVehicleForm />} />
-              <Route path="serviceorder" element={<ServiceOrderPage />} />
               <Route path="addserviceorder" element={<AddServiceOrderForm />} />
+            </Route>
+
+            {/* Only Mechanic, Receptionist, Admin */}
+            <Route element={<RequireAuth allowedRoles={['mechanic','receptionist', 'admin']} />}>
+              <Route path="serviceorder" element={<ServiceOrderPage />} />
+              <Route path="serviceorderdetails" element={<ServiceOrderDetails />} />
+            </Route>
+
+            {/* Only Mechanic */}
+            <Route element={<RequireAuth allowedRoles={['mechanic']} />}>
+              <Route path="addservicetask" element={<AddServiceTaskForm />} />
             </Route>
           </Route>
 

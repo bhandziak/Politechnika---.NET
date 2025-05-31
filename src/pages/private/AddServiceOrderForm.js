@@ -2,7 +2,6 @@ import React, { useEffect, useState,  useContext, useRef} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import { AuthContext } from '../../context/AuthProvider';
-import LinkButton from '../../components/LinkButton';
 import APIs from '../../api/ApiURL';
 import PopUp from '../../components/PopUp';
 import ValidatedInput from '../../components/ValidatedInput';
@@ -14,9 +13,7 @@ const AddServiceOrderForm = () => {
     const location = useLocation();
     const serviceOrder = location.state;
     const { userId, role } = useContext(AuthContext);
-    const [mechanics, setMechanics] = useState([
-        {mechanicId: 1, login: "Wojtas"},
-        {mechanicId: 2, login: "Barti"}]);
+    const [mechanics, setMechanics] = useState([]);
 
 
     const [formData, setFormData] = useState({
@@ -54,11 +51,14 @@ const AddServiceOrderForm = () => {
             withCredentials: true
         });
         if(response.status === 200){
-          console.log(response.data)
-          setFormData(prev => ({
-            ...prev,
-            mechanicId: response.data[0].mechanicId
-        }));
+            console.log(response.data)
+            if(response.data.mechanics.length > 0){
+                setFormData(prev => ({
+                ...prev,
+                mechanicId: response.data.mechanics[0].mechanicId
+                }));
+                setMechanics(response.data.mechanics);
+            }
         }
 
       } catch (err) {
@@ -83,11 +83,11 @@ const AddServiceOrderForm = () => {
         }
 
         try {
-        const response = await axios.post(APIs.ADD_SERVICE_ORDER,
+        const response = await axios.put(APIs.ADD_SERVICE_ORDER,
             JSON.stringify({ 
                 ServiceOrderId: serviceOrder.serviceOrderId,
                 Description: description,
-                MechanicId: mechanicId
+                UserId: mechanicId
             }),
             {headers: { 
                 'Content-Type': 'application/json'
@@ -139,7 +139,7 @@ const AddServiceOrderForm = () => {
                 onChange={handleChange}
                 >
                 {mechanics.map(m => (
-                    <option key={m.mechanicId} value={m.mechanicId}>{m.login}</option>
+                    <option key={m.mechanicId} value={m.mechanicId}>{m.userName}</option>
                 ))}
             </select>
             <br/>

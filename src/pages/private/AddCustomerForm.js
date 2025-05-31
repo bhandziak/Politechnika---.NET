@@ -73,8 +73,8 @@ const AddCustomerForm = () => {
     try {
       const response = await axios.post(APIs.ADD_CUSTOMER,
         JSON.stringify({ 
-          FirstName: name,
-          LastName: surname,
+          NameCustomer: name,
+          SurnameCustomer: surname,
           PhoneNumber: phoneNumber
          }),
         { headers: { 
@@ -90,7 +90,8 @@ const AddCustomerForm = () => {
         setRegexStatus({ name: false, surname: false, phoneNumber: false });
       }
     } catch (err) {
-      popUpRef.current?.show(err.response?.data || err.message);
+      console.log(err);
+      popUpRef.current?.show(err.response?.data.title || err.message);
     }
   };
 
