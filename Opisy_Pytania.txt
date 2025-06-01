@@ -1,0 +1,41 @@
+Task - 
+to operacja asynchroniczna potrzebna do przetwarzania równoległego.
+
+Parallel -
+klasa służąca do wykonywania równoległych operacji na więcej niż
+jednym wątku.
+
+ConcurrentDictionary -
+słownik możliwy do przetwarzania wielowątkowego bez ryzyka nadpisania
+danych, czy uzyskania złego wyniku. Operacje dodawania, usuwania itp.
+są chronione semaforem dostępnym w dotnet.
+
+Stopwatch -
+służy do mierzenia upływu czasu
+
+1. Jakie techniki zostały użyte do przetwarzania równoległego?
+
+Użyłem:
+- metody Task.WhenAll() - do wstrzymania się z analizą tekstu do momentu pobrania
+całego tekstu ze wszytkich stron
+
+- Parallel.ForEach - pętla do równoległej analizy tekstów. Każdy wątek oddzielnie
+analizuje tekst.
+
+- ConcurrentDictionary - słownik możliwy do przetwarzania wielowątkowego bez ryzyka nadpisania
+danych, czy uzyskania złego wyniku. Tutaj przechowuje globalne statystyki tekstów.
+
+2. Dlaczego synchronizacja była konieczna?
+
+Bez niej słownik mógłby (a raczej na pewno) zawierać nieprawne dane.
+Jeden wątek mógłby np. nadpisać wartość w słowniku.
+
+3. Jak wyglądałby ten kod bez równoległości? Co by się zmieniło?
+
+Program musiałby przetwarzać teksty jeden po drugim z wykorzystniem jednego wątku.
+
+4. Jak można jeszcze poprawić wydajność?
+
+Można użyć Span<char> lub Memory zamiast string do przetwarzania dużych tekstów.
+Można wydajniej łączyć lokalne statystyki w globalne. Czyli najpierw przetwarzać 
+teksty a na końcu łączyć statystyki.
