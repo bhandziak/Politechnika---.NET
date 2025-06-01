@@ -16,7 +16,7 @@ namespace GutenbergProject
             {
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
 
-                response.EnsureSuccessStatusCode(); // Rzuci wyjątek, jeśli status nie jest 2xx
+                response.EnsureSuccessStatusCode();
 
                 string content = await response.Content.ReadAsStringAsync();
 
