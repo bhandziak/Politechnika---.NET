@@ -90,7 +90,7 @@ namespace CarWorkshopProjekt.Controllers
 
             return Ok(filteredResult);
         }
-        //TESTY
+        //TESTY FRONTENDOWE
         // POST: api/serviceOrder/addServiceTask
         [Authorize(Roles = "admin,mechanic")]
         [HttpPost("addServiceTask")]
@@ -120,7 +120,7 @@ namespace CarWorkshopProjekt.Controllers
             return Ok("Pomyślnie dodano czynności serwisowe");
         }
 
-        //TESTY
+        //TESTY FRONTENDOWE & TESTY PO US11
         // GET: api/serviceOrder/getMechanicsTasks/{serviceOrderId}
         [Authorize(Roles = "admin,mechanic")]
         [HttpGet("getMechanicsTasks/{serviceOrderId}")]
@@ -161,6 +161,10 @@ namespace CarWorkshopProjekt.Controllers
             else if(status == "Anulowane")
             {
                 order.StatusOrder = OrderStatus.Anulowane.ToString();
+            }
+            else
+            {
+                return BadRequest("Nie ma takiej opcji");
             }
 
             await _context.SaveChangesAsync();
