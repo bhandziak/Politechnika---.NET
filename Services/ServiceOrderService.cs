@@ -23,7 +23,41 @@ namespace CarWorkshopProjekt.Services
                 .Include(so => so.User)
                 .ToListAsync();
 
-           return ServiceOrderMapper.ToReturnDtoList(serviceOrders);
+            return ServiceOrderMapper.ToReturnDtoList(serviceOrders);
         }
-    }
+
+       public async Task<List<ReturnMechanicsTasks>> GetServiceTasksWithPartsAsync(Guid orderId)
+        {
+            var serviceOrder = await _context.ServiceOrders
+                .Include(so => so.ServiceTasks)
+                    .ThenInclude(st => st.UsedParts)
+                        .ThenInclude(up => up.Part)
+                .FirstOrDefaultAsync(so => so.ServiceOrderId == orderId);
+
+            if (serviceOrder == null)
+            {
+                return null;
+            }
+
+            var serviceTasksDto = serviceOrder.ServiceTasks.Select(st => new ReturnMechanicsTasks
+            {
+                ServiceTaskId = st.ServiceTaskId.ToString(),
+                Name = st.Name,
+                LaborCost = st.LaborCost,
+                UsedParts = st.UsedParts.Select(up => new UsedPartDTO
+                {
+                    Quantity = up.Quantity,
+                    Part = new PartDTO
+                    {
+                        PartId = up.Part.PartId,
+                        NamePart = up.Part.NamePart,
+                        TypePart = up.Part.TypePart,
+                        UnitPrice = up.Part.UnitPrice
+                    }
+                }).ToList()
+            }).ToList();
+
+            return serviceTasksDto;
+        }
+    } 
 }

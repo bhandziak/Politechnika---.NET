@@ -19,6 +19,7 @@ namespace CarWorkshopProjekt.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ServiceOrderMapper _serviceOrderMapper = new();
+        private readonly ServiceTaskMapper _serviceTaskMapper = new();
         private readonly IServiceOrderService _serviceOrderService;
         private readonly UserManager<User> _userManager;
         public ServiceOrderController(
@@ -73,7 +74,7 @@ namespace CarWorkshopProjekt.Controllers
         }
 
         // GET: api/serviceOrder/getMechanicsServices
-        [Authorize(Roles = "mechanic")]
+        [Authorize(Roles = "admin,mechanic")]
         [HttpGet("getMechanicsServices")]
         public async Task<ActionResult<IEnumerable<ServiceOrder>>> GetMechanicsServicesAsync()
         {
@@ -89,7 +90,55 @@ namespace CarWorkshopProjekt.Controllers
 
             return Ok(filteredResult);
         }
+        //TESTY
+        // POST: api/serviceOrder/addServiceTask
+        [Authorize(Roles = "admin,mechanic")]
+        [HttpPost("addServiceTask")]
+        public async Task<IActionResult> AddServiceTask([FromBody] AddServiceTask serviceTaskDTO)
+        {
+            var order = await _context.ServiceOrders.FindAsync(Guid.Parse(serviceTaskDTO.ServiceOrderId));
 
+            if (order == null)
+            {
+                return NotFound("Zlecenie o podanym ID nie istnieje.");
+            }
+            //stworzenie nowego service-task przez mapperly
+            var newTask = _serviceTaskMapper.MapToEntity(serviceTaskDTO);
+            newTask.ServiceTaskId = Guid.NewGuid(); //ręczne dodanie guid
+            //Dodanie service-task
+            _context.ServiceTasks.Add(newTask);
+            
+            //Zmiana statusu serviceOrder
+            if(order.StatusOrder == OrderStatus.Nowe.ToString())
+            {
+                order.StatusOrder = OrderStatus.WTrakcie.ToString();
+            }
+            
+            
+            await _context.SaveChangesAsync();
 
+            return Ok("Pomyślnie dodano czynności serwisowe");
+        }
+
+        //TESTY
+        // GET: api/serviceOrder/getMechanicsTasks/{serviceOrderId}
+        [Authorize(Roles = "admin,mechanic")]
+        [HttpGet("getMechanicsTasks/{serviceOrderId}")]
+        public async Task<ActionResult<IEnumerable<ServiceOrder>>> GetMechanicsTasksAsync(string serviceOrderId)
+        {
+            if (!Guid.TryParse(serviceOrderId, out var orderId))
+            {
+                return BadRequest("Nieprawidłowy format ID.");
+            }
+
+            var tasks = await _serviceOrderService.GetServiceTasksWithPartsAsync(orderId);
+
+            if (tasks == null)
+            {
+                return NotFound("Zlecenie nie istnieje");
+            }
+
+            return Ok(tasks);
+        }
     }
 }
