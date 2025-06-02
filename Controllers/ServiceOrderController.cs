@@ -38,7 +38,7 @@ namespace CarWorkshopProjekt.Controllers
         {
             Nowe,
             WTrakcie,
-            Zakończone,
+            Zakonczone,
             Anulowane
         }
 
@@ -139,6 +139,32 @@ namespace CarWorkshopProjekt.Controllers
             }
 
             return Ok(tasks);
+        }
+        // PUT: api/serviceOrder/setStatus/{serviceOrderId} 
+        [Authorize(Roles = "admin,mechanic")]
+        [HttpPut("setStatus/{serviceOrderId}")]
+        public async Task<IActionResult> SetStatus(string serviceOrderId, [FromBody] string status)
+        {
+            var order = await _context.ServiceOrders.FindAsync(Guid.Parse(serviceOrderId));
+
+            if (order == null)
+            {
+                return NotFound("Zlecenie o podanym ID nie istnieje.");
+            }
+            
+            //zmiana statusu ServiceOrder
+            if(status == "Zakończone")
+            {
+                order.StatusOrder = OrderStatus.Zakonczone.ToString();
+                order.DateFinished = DateTime.UtcNow; 
+            }
+            else if(status == "Anulowane")
+            {
+                order.StatusOrder = OrderStatus.Anulowane.ToString();
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok("Sukces");
         }
     }
 }
