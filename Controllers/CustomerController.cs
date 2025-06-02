@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using CarWorkshopProjekt.Services;
 using CarWorkshopProjekt.Mappers;
+using static CarWorkshopProjekt.Controllers.ServiceOrderController;
 
 namespace CarWorkshopProjekt.Controllers
 {
@@ -190,6 +191,44 @@ namespace CarWorkshopProjekt.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Dodano zdjęcie pojazdu", imageUrl = vehicle.ImageURL });
+        }
+
+        // PUT: api/customer/update
+        [Authorize(Roles = "admin,receptionist")]
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateCustomer([FromBody] UpdateCustomer updateCustomer)
+        {
+            var customer = await _context.Customers.FindAsync(updateCustomer.CustomerId);
+
+            if (customer == null)
+            {
+                return NotFound("Klient o podanym ID nie istnieje.");
+            }
+
+            //Mapperly
+            //update Customer przez mapperly
+            _customerMapper.UpdateCustomer(updateCustomer, customer);
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // DELETE: api/customer/delete/{customerId}
+        [Authorize(Roles = "admin,receptionist")]
+        [HttpDelete("delete/{customerId}")]
+        public async Task<IActionResult> DeleteCustomer(Guid customerId)
+        {
+            var customer = await _context.Customers.FindAsync(customerId);
+
+            if (customer == null)
+            {
+                return NotFound("Klient o podanym ID nie istnieje.");
+            }
+
+            _context.Customers.Remove(customer);
+
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
     }
