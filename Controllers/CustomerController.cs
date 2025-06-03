@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using CarWorkshopProjekt.Services;
 using CarWorkshopProjekt.Mappers;
 using static CarWorkshopProjekt.Controllers.ServiceOrderController;
+using System.Globalization;
 
 namespace CarWorkshopProjekt.Controllers
 {
@@ -229,6 +230,65 @@ namespace CarWorkshopProjekt.Controllers
 
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+
+        // GET: api/customer/getRaport/{customerId}
+        [Authorize(Roles = "admin,receptionist")]
+        [HttpGet("getRaport/{customerId}")]
+        public async Task<ActionResult<IEnumerable<ServiceOrder>>> GetRaport(Guid customerId)
+        {
+            var serviceOrders = await _context.ServiceOrders
+                 .Include(so => so.Customer)
+                 .Include(so => so.Vehicle)
+                 .Include(so => so.User)
+                 .Include(so => so.ServiceTasks)
+                 .Where(so => so.CustomerId == customerId && so.UserId != null) //UserId != null - pomija nieaktywne jeszcze zlecenia 
+                 .ToListAsync();
+
+            if (!serviceOrders.Any())
+            {
+                return NotFound("Brak zleceń dla danego klienta.");
+            }
+
+            var result = serviceOrders.Select(so => new ReturnRaport
+            {
+                ServiceOrderId = so.ServiceOrderId,
+                StatusOrder = so.StatusOrder,
+                Description = so.Description,
+                DateFinished = so.DateFinished,
+                Customer = new ReturnCustomer
+                {
+                    CustomerId = so.Customer.CustomerId,
+                    NameCustomer = so.Customer.NameCustomer,
+                    SurnameCustomer = so.Customer.SurnameCustomer,
+                    PhoneNumber = so.Customer.PhoneNumber
+                },
+                Vehicle = new ReturnVehicle
+                {
+                    VehicleId = so.Vehicle.VehicleId,
+                    BrandVehicle= so.Vehicle.BrandVehicle,
+                    ModelVehicle = so.Vehicle.ModelVehicle,
+                    VINVehicle = so.Vehicle.VINVehicle,
+                    RegistralNumberVehicle = so.Vehicle.RegistralNumberVehicle,
+                    YearVehicle = so.Vehicle.YearVehicle,
+                    ImageURL = so.Vehicle.ImageURL                    
+                },
+                Mechanic = new ReturnUser
+                {
+                    Id = so.User.Id,
+                    UserName = so.User.UserName,
+                    Role = "mechanic"
+                },
+                ServiceTasks = so.ServiceTasks.Select(task => new AddServiceTask
+                {
+                    ServiceOrderId = task.ServiceOrderId.ToString(),
+                    Name = task.Name,
+                    LaborCost = task.LaborCost.ToString("F2", CultureInfo.InvariantCulture)//F2 - dwa miejsca po przecinku, InvariantCulture - niezależna lokalizacja separatora od regionu
+                }).ToList()
+            }).ToList();
+
+            return Ok(result);
         }
 
     }
