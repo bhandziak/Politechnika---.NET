@@ -2,8 +2,8 @@
 {
     public class SetPartDTO
     {
-        public string ServiceTaskId;
-        public string partId;
-        public string quantity;
+        public string ServiceTaskId { get; set; }
+        public string partId { get; set; }
+        public string quantity { get; set; }
     }
 }
