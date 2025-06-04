@@ -60,16 +60,16 @@ namespace CarWorkshopProjekt.Controllers
                 return NotFound("Zlecenie o podanym ID nie istnieje.");
             }
             //DTO
-            var commentsDto = serviceOrder.Comments
-                .OrderByDescending(c => c.TimestampComment) //OrderByDescending -  najnowsze pierwsze
-                .Select(c => new ReturnComment
-                {
-                    CommentId = c.CommentId,
-                    Content = c.Content,
-                    TimestampComment = c.TimestampComment,
-                    UserId = c.UserId,
-                })
-                .ToList();
+            var commentsDto = new List<ReturnComment>();
+
+            foreach (var comment in serviceOrder.Comments.OrderByDescending(c => c.TimestampComment))
+            {
+                var roles = await _userManager.GetRolesAsync(comment.User);
+                var role = roles.FirstOrDefault() ?? "none";
+
+                var dto = _commentMapper.MapToDto(comment, role);
+                commentsDto.Add(dto);
+            }
 
             return Ok(commentsDto);
         }

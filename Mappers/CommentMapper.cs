@@ -19,5 +19,22 @@ namespace CarWorkshopProjekt.Mappers
                 TimestampComment = DateTime.UtcNow
             };
         }
+
+        //[HttpGet("getAll")]
+        public ReturnComment MapToDto(Comment comment, string role)
+        {
+            return new ReturnComment
+            {
+                CommentId = comment.CommentId,
+                Content = comment.Content,
+                TimestampComment = comment.TimestampComment,
+                User = new ReturnUser
+                {
+                    Id = comment.User.Id,
+                    UserName = comment.User.UserName,
+                    Role = role
+                }
+            };
+        }
     }
 }
