@@ -12,62 +12,7 @@ const ServiceOrderDetails = () => {
   const { userId, role } = useContext(AuthContext);
   const so = location.state;
   const [statusOrder, setStatusOrder] = useState(so.statusOrder);
-  const [serviceTasks, setServiceTasks] = useState(
-    [
-      {
-        serviceTaskId: 1,
-        name: "Wymiana oleju silnikowego",
-        laborCost: 100.00,
-        part: {
-          namePart: "Olej syntetyczny",
-          typePart: "5W30"
-        },
-        quantity: 1,
-        totalCost: 100.00  // laborCost + (partPrice * quantity), np. część gratis lub wewnętrznie rozliczona
-      },
-      {
-        serviceTaskId: 2,
-        name: "Wymiana filtra powietrza",
-        laborCost: 50.00,
-        part: {
-          namePart: "Filtr powietrza",
-          typePart: "OP1000"
-        },
-        quantity: 1,
-        totalCost: 70.00  // np. laborCost 50 + partCost 20
-      },
-      {
-        serviceTaskId: 3,
-        name: "Wymiana klocków hamulcowych",
-        laborCost: 120.00,
-        part: {
-          namePart: "Klocki hamulcowe",
-          typePart: "KH-200"
-        },
-        quantity: 4,
-        totalCost: 400.00  // laborCost 120 + (partCost 70 * 4) = 120 + 280 = 400
-      },
-      {
-        serviceTaskId: 4,
-        name: "Diagnostyka silnika",
-        laborCost: 80.00,
-        part: null,       // w tym przypadku nie używamy żadnej części
-        quantity: 0,
-        totalCost: 80.00  // tylko koszt robocizny
-      },
-      {
-        serviceTaskId: 5,
-        name: "Wymiana akumulatora",
-        laborCost: 90.00,
-        part: {
-          namePart: "Akumulator",
-          typePart: "60Ah"
-        },
-        quantity: 1,
-        totalCost: 190.00 // laborCost 90 + partCost 100 = 190
-      }
-    ]
-  );
+  const [serviceTasks, setServiceTasks] = useState([]);
 
 
   console.log(so);
@@ -95,9 +40,7 @@ const ServiceOrderDetails = () => {
     try {
       const ServiceOrderId = so.serviceOrderId;
       const response = await axios.put(`${APIs.SET_STATUS}/${ServiceOrderId}`,
-        JSON.stringify({
-          Status: status
-        }),
+          status,
         {
           headers: {
             'Content-Type': 'application/json'
@@ -106,7 +49,7 @@ const ServiceOrderDetails = () => {
         });
       if (response.status === 200) {
         console.log(response.data);
-        popUpRef.current?.show(response.data.message);
+        popUpRef.current?.show(response.data);
         setStatusOrder(status);
       }
 
@@ -134,12 +77,12 @@ const ServiceOrderDetails = () => {
       </div>
       <div id='btnLayout'>
         { // tylko przypisany mechanik lub admin może zmienić status | tylko mechanik może dodać taska
-          ["Nowe", "W trakcie"].includes(statusOrder) && (userId === so.mechanic?.id || role === "admin") && (
+          ["Nowe", "WTrakcie"].includes(statusOrder) && (userId === so.mechanic?.id || role === "admin") && (
             <>
               {userId === so.mechanic?.id && (
                 <LinkButton webpath={`/addservicetask`} name='Add Service Task' stateObj={so} />
               )}
-              <button className="navButton" onClick={() => setStatus("Zakonczone")}>Complete Order</button>
+              <button className="navButton" onClick={() => setStatus("Zakończone")}>Complete Order</button>
               <button className="navButton" onClick={() => setStatus("Anulowane")}>Cancel Order</button>
             </>
           )
@@ -168,8 +111,8 @@ const ServiceOrderDetails = () => {
                 <td className='dataTd'>{st.laborCost}</td>
                 <td className='dataTd'>
                   {
-                    st.part ?
-                      `${st.part.namePart} ${st.part.typePart}`
+                    st?.usedPart ?
+                      `${st.usedPart.part.namePart} ${st.usedPart.part.typePart}`
                       :
                       userId == so.mechanic?.id ? //tylko przypisany mechanik może dodawać Part
                         <LinkButton webpath={`/addusedpart`} name='Add Part' stateObj={st} />
@@ -177,7 +120,7 @@ const ServiceOrderDetails = () => {
                         "-"
                   }
                 </td>
-                <td className='dataTd'>{st.quantity}</td>
+                <td className='dataTd'>{st?.usedPart ?  st.usedPart.quantity : "-"}</td>
                 <td className='dataTd'>{st.totalCost}</td>
               </tr>
             ))}

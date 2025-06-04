@@ -28,8 +28,12 @@ const APIs = {
 //#US9
     SET_STATUS: "api/serviceOrder/setStatus",
 //#US10
-    GET_COMMENTS: "api/comment/getAll/{ServiceOrderId}",
-    ADD_COMMENT: "api/comment/addComment"
+    GET_COMMENTS: "api/comment/getAll",
+    ADD_COMMENT: "api/comment/addComment",
+//#US11
+    ADD_PART: "api/part/addPart",
+    UPDATE_PART: "api/part/update",
+    DELETE_PART: "api/part/delete"
 }
 
 export default APIs;

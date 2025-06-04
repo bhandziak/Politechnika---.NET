@@ -42,6 +42,12 @@ const Layout = () => {
             <LinkButton webpath='/serviceorder' name='Service Order' />
           </>
         }
+        {
+          ['receptionist', 'admin'].includes(role) &&
+          <>
+            <LinkButton webpath='/parts' name='Parts' />
+          </>
+        }
 
         <div id='rightSide'>
           <div id='userInfo'>

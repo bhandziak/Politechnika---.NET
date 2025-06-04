@@ -138,7 +138,7 @@ const AddUsedPartForm = () => {
             );
 
             if (response.status === 200) {
-                popUpRef.current?.show(response.data.message);
+                popUpRef.current?.show("Suma kosztów Service Task: " + response.data);
                 setFormData({ partId: "", quantity: "" });
                 setRegexStatus({ quantity: false });
             }

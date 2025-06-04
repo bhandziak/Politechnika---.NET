@@ -11,44 +11,7 @@ const CommentPage = () => {
   const location = useLocation();
   const { userId, login, role } = useContext(AuthContext);
   const so = location.state;
-  const [comments, setComments] = useState([
-    {
-      commentId: 1,
-      user: { userName: "marek.kowalski" },
-      timestampComment: "2025-05-31 09:45:00",
-      content: "Wszystko zostało wykonane zgodnie z planem, polecam serwis."
-    },
-    {
-      commentId: 2,
-      user: { userName: "anna.nowak" },
-      timestampComment: "2025-05-31 10:20:15",
-      content: "Mechanik skontaktował się ze mną i wyjaśnił szczegóły naprawy."
-    },
-    {
-      commentId: 3,
-      user: { userName: "piotr.wisniewski" },
-      timestampComment: "2025-05-31 11:05:30",
-      content: "Szybka i profesjonalna obsługa. Dziękuję!"
-    },
-    {
-      commentId: 4,
-      user: { userName: "kasia.mazur" },
-      timestampComment: "2025-05-31 11:42:10",
-      content: "Części dotarły z opóźnieniem, ale zostałem o tym poinformowany."
-    },
-    {
-      commentId: 5,
-      user: { userName: "jan.adamczyk" },
-      timestampComment: "2025-05-31 12:17:00",
-      content: "Po wymianie akumulatora auto odpala bez zarzutu."
-    },
-    {
-      commentId: 6,
-      user: { userName: "alicja.zielinska" },
-      timestampComment: "2025-05-31 12:55:45",
-      content: "Fajnie, że dodano komentarze – teraz wiem, co było robione."
-    }
-  ]);
+  const [comments, setComments] = useState([]);
 
   const [commentText, setCommentText] = useState("");
 
@@ -85,9 +48,9 @@ const CommentPage = () => {
       const ServiceOrderId = so.serviceOrderId;
       const response = await axios.post(APIs.ADD_COMMENT,
         JSON.stringify({
-          ServiceOrderId: ServiceOrderId,
-          Author: login,
-          Text: commentText
+          serviceOrderId: ServiceOrderId,
+          userId: userId,
+          content: commentText
         }),
         {
           headers: {
@@ -97,8 +60,9 @@ const CommentPage = () => {
         });
       if (response.status === 200) {
         console.log(response.data);
-        popUpRef.current?.show(response.data.message);
+        // popUpRef.current?.show(response.data);
         setCommentText("");
+        fetchComments();
       }
 
     } catch (err) {
@@ -109,7 +73,7 @@ const CommentPage = () => {
 
   useEffect(() => {
     fetchComments();
-  }, [comments]);
+  }, []);
   return (
     <div className='contentColumn'>
 
@@ -153,7 +117,7 @@ const CommentPage = () => {
             <tr className='dataTr' key={c.commentId}>
               <td className='dataTd'>{c.user.userName}</td>
               <td className='dataTd'>{c.user.role}</td>
-              <td className='dataTd'>{c.timestampComment}</td>
+              <td className='dataTd'>{new Date(c.timestampComment).toLocaleString()}</td>
               <td className='dataTd'>{c.content}</td>
             </tr>
           ))}

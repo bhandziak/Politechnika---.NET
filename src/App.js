@@ -24,6 +24,8 @@ import AddServiceTaskForm from "./pages/private/AddServiceTaskForm";
 import ServiceOrderDetails from "./pages/private/ServiceOrderDetails";
 import AddUsedPartForm from "./pages/private/AddUsedPartForm";
 import HomePage from "./pages/private/HomePage";
+import PartsPage from "./pages/private/PartsPage";
+import AddPartForm from "./pages/private/AddPartForm";
 
 
 const App = () => {
@@ -54,6 +56,7 @@ const App = () => {
             {/* Only Admin */}
             <Route element={<RequireAuth allowedRoles={['admin']} />}>
               <Route path="setrole" element={<SetRolePage />} />
+              <Route path="addpart" element={<AddPartForm />} />
             </Route>
 
             {/* Only Receptionist, Admin */}
@@ -67,6 +70,7 @@ const App = () => {
             <Route element={<RequireAuth allowedRoles={['mechanic', 'receptionist', 'admin']} />}>
               <Route path="serviceorder" element={<ServiceOrderPage />} />
               <Route path="serviceorderdetails" element={<ServiceOrderDetails />} />
+              <Route path="parts" element={<PartsPage />} />
             </Route>
 
             {/* Only Mechanic */}

@@ -84,7 +84,7 @@ const ServiceOrderPage = () => {
                   <td className='dataTd'>{so.description}</td>
                   <td className='dataTd'>{so.mechanic?.userName}</td>
                   <td className='dataTd'>{so.statusOrder}</td>
-                  <td className='dataTd'>{so.dateFinished != null ? so.dateFinished : "-"}</td>
+                  <td className='dataTd'>{so.dateFinished != null ? new Date(so.dateFinished).toLocaleString()  : "-"}</td>
                   <td className='dataTd'>
                     {
                       so.statusOrder != null ? // zlecenie stworzone

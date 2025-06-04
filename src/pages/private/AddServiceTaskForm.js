@@ -6,7 +6,7 @@ import APIs from '../../api/ApiURL';
 import PopUp from '../../components/PopUp';
 import ValidatedInput from '../../components/ValidatedInput';
 
-const DECIMAL_REGEX = /^\d+(\.\d{1,2})?$/;
+const DECIMAL_REGEX = /^\d+(\,\d{1,2})?$/;
 
 const AddServiceTaskForm = () => {
   const navigate = useNavigate();
@@ -69,10 +69,10 @@ const AddServiceTaskForm = () => {
 
     try {
       const ServiceOrderId = so.serviceOrderId;
-      const response = await axios.put(APIs.ADD_SERVICE_TASK,
+      const response = await axios.post(APIs.ADD_SERVICE_TASK,
         JSON.stringify({
-          ServiceOrderId: ServiceOrderId,
-          Name: name,
+          serviceOrderId: ServiceOrderId,
+          name: name,
           laborCost: laborCost
         }),
         {
@@ -84,7 +84,8 @@ const AddServiceTaskForm = () => {
       );
 
       if (response.status === 200) {
-        popUpRef.current?.show(response.data.message);
+        console.log(response.data);
+        popUpRef.current?.show(response.data);
         setFormData({ name: "", laborCost: "" });
         setRegexStatus({ laborCost: false });
       }
@@ -127,7 +128,7 @@ const AddServiceTaskForm = () => {
             type="text"
             handleChange={handleChange}
             handleFocusOn={handleFocusOn}
-            validationText={<>Format kosztu : %%.%%</>}
+            validationText={<>Format kosztu : %%,%%</>}
           />
 
           <PopUp ref={popUpRef} />
