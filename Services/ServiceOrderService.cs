@@ -44,7 +44,7 @@ namespace CarWorkshopProjekt.Services
                 ServiceTaskId = st.ServiceTaskId.ToString(),
                 Name = st.Name,
                 LaborCost = st.LaborCost,
-                UsedParts = st.UsedParts.Select(up => new UsedPartDTO
+                UsedPart = st.UsedParts.Select(up => new UsedPartDTO
                 {
                     Quantity = up.Quantity,
                     Part = new PartDTO
@@ -54,7 +54,7 @@ namespace CarWorkshopProjekt.Services
                         TypePart = up.Part.TypePart,
                         UnitPrice = up.Part.UnitPrice
                     }
-                }).ToList()
+                }).FirstOrDefault()
             }).ToList();
 
             return serviceTasksDto;

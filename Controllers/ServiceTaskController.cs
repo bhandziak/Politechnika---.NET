@@ -40,6 +40,9 @@ namespace CarWorkshopProjekt.Controllers
             if (serviceTask == null)
                 return NotFound("Nie znaleziono service task");
 
+            if (serviceTask.UsedParts.Any())
+                return BadRequest("Do tego service task została już przypisana część.");
+
             //Szukanie części 'part'
             var part = await _context.Parts.FindAsync(partId);
             if (part == null)
