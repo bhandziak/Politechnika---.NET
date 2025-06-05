@@ -211,7 +211,7 @@ namespace CarWorkshopProjekt.Controllers
             _customerMapper.UpdateCustomer(updateCustomer, customer);
 
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok("Klient został pomyślnie zaktualizowany.");
         }
 
         // DELETE: api/customer/delete/{customerId}
