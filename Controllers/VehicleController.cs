@@ -44,29 +44,42 @@ namespace CarWorkshopProjekt.Controllers
         [HttpDelete("delete/{vehicleId}")]
         public async Task<IActionResult> DeleteVehicle(Guid vehicleId)
         {
-            var vehicle = await _context.Vehicles.FindAsync(vehicleId);
+            var vehicle = await _context.Vehicles // wyszukanie całego obiektu wraz z obj Comments, ServiceOrders
+                .Include(v => v.ServiceOrders)
+                .ThenInclude(so => so.Comments)
+                .Include(v => v.ServiceOrders)
+                .ThenInclude(so => so.ServiceTasks)
+                .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
 
             if (vehicle == null)
             {
                 return NotFound("Samochód o podanym ID nie istnieje.");
             }
+            // można usunąć Vehicles jeśli ServiceOrders jeszcze nie został stworzony przez recepcjoniste
+            bool allOrdersDeletable = vehicle.ServiceOrders.All(so => so.StatusOrder == null);
+            if (!allOrdersDeletable)
+            {
+                return BadRequest("Nie można usunąć pojazdu, ponieważ istnieją z nim powiązane dane (zlecenia).");
+            }
 
+            // kaskadowe usuwanie ServiceOrders
+            foreach (var serviceOrder in vehicle.ServiceOrders)
+            {
+                _context.Comments.RemoveRange(serviceOrder.Comments);
+                _context.ServiceTasks.RemoveRange(serviceOrder.ServiceTasks);
+            }
+
+            _context.ServiceOrders.RemoveRange(vehicle.ServiceOrders);
             _context.Vehicles.Remove(vehicle);
+
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok("Samochód został pomyślnie usunięty.");
+                return Ok("Pojazd został usunięty.");
             }
-            catch (DbUpdateException ex)
+            catch (Exception)
             {
-                //sprawdzenie czy wyjątek dotyczy referencji
-                if (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE"))
-                {
-                    return BadRequest("Nie można usunąć pojazdu, ponieważ istnieją z nim powiązane dane (zlecenia).");
-                }
-
-                // Inny wyjątek - ogólny komunikat
-                return StatusCode(500, "Wystąpił błąd podczas usuwania pojazdu.");
+                return StatusCode(500, "Błąd przy usuwaniu pojazdu.");
             }
         }
 
