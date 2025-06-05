@@ -36,7 +36,7 @@ namespace CarWorkshopProjekt.Controllers
             _vehicleMapper.UpdateVehicle(updateVehicle, vehicle);
 
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok("Samochód został zaktualizowany");
         }
 
         // DELETE: api/vehicle/delete/{vehicleId}

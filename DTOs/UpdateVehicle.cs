@@ -8,7 +8,6 @@
         public string VINVehicle { get; set; }
         public string RegistralNumberVehicle { get; set; }
         public int YearVehicle { get; set; }
-        public string ImageURL { get; set; }
 
     }
 }
