@@ -8,10 +8,14 @@ const APIs = {
     SET_ROLE: "/api/user/setRole",
 //#US3
     ADD_CUSTOMER: "api/customer/addCustomer",
-    GET_ALL_CUSTOMERS: '/api/customer/getCustomers',
+    GET_ALL_CUSTOMERS: "/api/customer/getCustomers",
+    DELETE_CUSTOMER: "api/customer/delete",
+    UPDATE_CUSTOMER: "api/customer/update",
 //#US4
     CUSTOMER_DETAILS: "api/customer/getDetails",
     ADD_VEHICLE: "api/customer/addVehicle",
+    DELETE_VEHICLE: "api/vehicle/delete",
+    UPDATE_VEHICLE: "api/vehicle/update",
 //#US5
     SEND_PHOTO: "api/customer/getDetails/addVehicleImage",
 //#US6

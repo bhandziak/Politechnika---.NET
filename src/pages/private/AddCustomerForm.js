@@ -1,4 +1,5 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { useLocation } from 'react-router-dom';
 import { AuthContext } from "../../context/AuthProvider";
 import PopUp from "../../components/PopUp";
 import axios from "../../api/axios";
@@ -12,16 +13,19 @@ const PHONE_REGEX = /^\+48\d{9}$/;
 const AddCustomerForm = () => {
   const { userId } = useContext(AuthContext);
   const popUpRef = useRef();
+  const location = useLocation();
+  const data = location.state;
 
   const [formData, setFormData] = useState({
+    id: null,
     name: "",
     surname: "",
     phoneNumber: ""
   });
   const [regexStatus, setRegexStatus] = useState({
-    name: false,
-    surname: false,
-    phoneNumber: false
+    name: true,
+    surname: true,
+    phoneNumber: true
   })
   const [formFocus, setFormFocus] = useState({
     name: false,
@@ -96,12 +100,69 @@ const AddCustomerForm = () => {
     }
   };
 
+
+  const updateCustomer = async (e) => {
+    e.preventDefault();
+
+    const { id, name, surname, phoneNumber } = formData;
+
+    if (!name || !surname || !phoneNumber) {
+      popUpRef.current?.show("Wszystkie pola są wymagane.");
+      return;
+    }
+    if (!regexStatus.name || !regexStatus.surname || !regexStatus.phoneNumber) {
+      popUpRef.current?.show("Podane dane klienta nie spełniają kryteriów.");
+      return;
+    }
+
+    try {
+      const response = await axios.put(APIs.UPDATE_CUSTOMER,
+        JSON.stringify({
+          CustomerId: id,
+          NameCustomer: name,
+          SurnameCustomer: surname,
+          PhoneNumber: phoneNumber
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      );
+
+      if (response.status === 200) {
+        popUpRef.current?.show(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+      popUpRef.current?.show(err.response?.data.title || err.message);
+    }
+  };
+
+  useEffect(() => {
+    console.log(data);
+    if (data?.action == "update") {
+      let customer = data.customer;
+      setFormData({
+        id: customer.customerId,
+        name: customer.nameCustomer,
+        surname: customer.surnameCustomer,
+        phoneNumber: customer.phoneNumber
+      })
+    }
+  }, []);
+
   return (
     <div className="content">
 
       <form className="loginPanel">
-        <h3>Add Customer</h3>
-
+        {
+          data?.action == "update" ?
+            <h3>Update Customer</h3>
+            :
+            <h3>Add Customer</h3>
+        }
         <ValidatedInput
           htmlName={"name"}
           labelText="Name"
@@ -143,7 +204,12 @@ const AddCustomerForm = () => {
 
 
         <PopUp ref={popUpRef} />
-        <button className="btn" onClick={addCustomer}>Add Customer</button>
+        {
+          data?.action == "update" ?
+            <button className="btn" onClick={updateCustomer}>Update Customer</button>
+            :
+            <button className="btn" onClick={addCustomer}>Add Customer</button>
+        }
       </form>
     </div>
   );

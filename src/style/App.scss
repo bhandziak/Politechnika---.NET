@@ -6,6 +6,8 @@ body {
     margin: 0;
     font-family: "Gill Sans", sans-serif;
     color: vars.$secondary-color;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 #root {

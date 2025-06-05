@@ -57,6 +57,25 @@ const CustomerDetails = () => {
     }
   };
 
+  const deleteVehicle = async (vehicleId) => {
+    try {
+      const response = await axios.delete(`${APIs.DELETE_VEHICLE}/${vehicleId}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+      if (response.status === 200) {
+        console.log(response.data);
+        popUpRef.current?.show(response.data);
+        fetchDetails();
+      }
+
+    } catch (err) {
+      popUpRef.current?.show(err.response?.data || err.message);
+    }
+  }
+
   return (
     <div className='contentColumn'>
       <PopUp ref={popUpRef} />
@@ -65,7 +84,9 @@ const CustomerDetails = () => {
         <div ><span className='highlight'>Surname: </span>{detail.surnameCustomer}</div>
         <div ><span className='highlight'>Phone number: </span>{detail.phoneNumber}</div>
         {['receptionist', 'admin'].includes(role) &&
-          <LinkButton webpath='/addvehicle' name='Add vehicle' stateObj={detail} />
+          <LinkButton webpath='/addvehicle' name='Add vehicle' stateObj={
+            { customer: detail }
+          } />
         }
       </div>
 
@@ -76,6 +97,8 @@ const CustomerDetails = () => {
               <th className='dataTh'>Nr.</th>
               <th className='dataTh'>Image</th>
               <th className='dataTh'>Info</th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -105,6 +128,24 @@ const CustomerDetails = () => {
                   <div><span className='highlight'>Registral number: </span>{vehicle.registralNumberVehicle}</div>
                   <div><span className='highlight'>Year: </span>{vehicle.yearVehicle}</div>
                 </td>
+                {
+                  ['receptionist', 'admin'].includes(role) &&
+                  <>
+                    <td className='dataTd'>
+                      <LinkButton webpath='/addvehicle' name='Update' stateObj={
+                        {
+                          customer: detail,
+                          action: "update",
+                          vehicle: vehicle
+                        }
+                      } />
+                    </td>
+                    <td className='dataTd'>
+                      <button className="btn" onClick={() => deleteVehicle(vehicle.vehicleId)}>Delete</button>
+                    </td>
+                  </>
+                }
+
               </tr>
             ))}
           </tbody>

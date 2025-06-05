@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocation } from 'react-router-dom';
 import { AuthContext } from "../../context/AuthProvider";
 import PopUp from "../../components/PopUp";
@@ -14,10 +14,12 @@ const REGISTRAL_NUMBER_REGEX = /^[A-Z]{2,3}\s?\d{4,5}[A-Z]{0,2}$/;
 const AddVehicleForm = () => {
   const popUpRef = useRef();
   const location = useLocation();
-  const detail = location.state;
+  const detail = location.state.customer;
+  const data = location.state;
   const { userId, role } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
+    id: "",
     brand: "",
     model: "",
     vin: "",
@@ -25,11 +27,11 @@ const AddVehicleForm = () => {
     year: ""
   });
   const [regexStatus, setRegexStatus] = useState({
-    brand: false,
-    model: false,
-    vin: false,
-    registralNumber: false,
-    year: false
+    brand: true,
+    model: true,
+    vin: true,
+    registralNumber: true,
+    year: true
   })
   const [formFocus, setFormFocus] = useState({
     brand: false,
@@ -111,6 +113,62 @@ const AddVehicleForm = () => {
     }
   };
 
+
+  const updateVehicle = async (e) => {
+    e.preventDefault();
+
+    const { id, brand, model, vin, registralNumber, year } = formData;
+
+    if (!brand || !model || !vin || !registralNumber || !year) {
+      popUpRef.current?.show("Wszystkie pola są wymagane.");
+      return;
+    }
+    if (!regexStatus.brand || !regexStatus.model || !regexStatus.vin || !regexStatus.registralNumber || !regexStatus.year) {
+      popUpRef.current?.show("Podane dane samochodu nie spełniają kryteriów.");
+      return;
+    }
+
+    try {
+      const response = await axios.put(APIs.UPDATE_VEHICLE,
+        JSON.stringify({
+          VehicleId: id,
+          BrandVehicle: brand,
+          ModelVehicle: model,
+          VINVehicle: vin,
+          RegistralNumberVehicle: registralNumber,
+          YearVehicle: year
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      );
+
+      if (response.status === 200) {
+        popUpRef.current?.show(response.data);
+      }
+    } catch (err) {
+      popUpRef.current?.show(err.response?.data || err.message);
+    }
+  };
+
+  useEffect(() => {
+    console.log(data);
+    if (data?.action == "update") {
+      let vehicle = data.vehicle;
+      setFormData({
+        id: vehicle.vehicleId,
+        brand: vehicle.brandVehicle,
+        model: vehicle.modelVehicle,
+        vin: vehicle.vinVehicle,
+        registralNumber: vehicle.registralNumberVehicle,
+        year: vehicle.yearVehicle
+      });
+    }
+  }, []);
+
   return (
 
     <div className='contentColumn'>
@@ -186,7 +244,13 @@ const AddVehicleForm = () => {
           />
 
           <PopUp ref={popUpRef} />
-          <button className="btn" onClick={addVehicle}>Add Vehicle</button>
+          {
+            data?.action == "update" ?
+              <button className="btn" onClick={updateVehicle}>Update Vehicle</button>
+              :
+              <button className="btn" onClick={addVehicle}>Add Vehicle</button>
+          }
+
         </form>
       </div>
     </div>

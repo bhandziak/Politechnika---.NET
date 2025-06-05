@@ -87,10 +87,11 @@ const PartsPage = () => {
                   <td>
                     <LinkButton webpath='/addpart' name='Update' stateObj={
                       { action: "update", part: p }
-                    } />
+                    }
+                    cssClass={'updateButton'} />
                   </td>
                   <td>
-                    <button className="btn" onClick={() => deletePart(p.partId)}>Delete</button>
+                    <button className="btn deleteButton" onClick={() => deletePart(p.partId)}>Delete</button>
                   </td>
                   </>
                 }

@@ -28,6 +28,25 @@ const CustomersPage = () => {
     }
   };
 
+  const deleteCustomer = async (customerId) => {
+    try {
+      const response = await axios.delete(`${APIs.DELETE_CUSTOMER}/${customerId}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+      if (response.status === 200) {
+        console.log(response.data);
+        popUpRef.current?.show(response.data);
+        fetchCustomers();
+      }
+
+    } catch (err) {
+      popUpRef.current?.show(err.response?.data || err.message);
+    }
+  }
+
   useEffect(() => {
     fetchCustomers();
   }, []);
@@ -50,6 +69,8 @@ const CustomersPage = () => {
               <th className='dataTh'>Surname</th>
               <th className='dataTh'>Phone number</th>
               <th></th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -60,8 +81,24 @@ const CustomersPage = () => {
                 <td className='dataTd'>{customer.surnameCustomer}</td>
                 <td className='dataTd'>{customer.phoneNumber}</td>
                 <td className='dataTd'>
-                  <LinkButton webpath={`/details/${customer.customerId}`} name='Details' />
+                  <LinkButton webpath={`/details/${customer.customerId}`} name='Details'
+                  cssClass={'detailsButton'}
+                  />
                 </td>
+                {['receptionist', 'admin'].includes(role) &&
+                  <>
+                    <td>
+                      <LinkButton webpath='/addcustomer' name='Update' stateObj={
+                        { action: "update", customer: customer }
+                      } 
+                      cssClass={'updateButton'}
+                      />
+                    </td>
+                    <td>
+                      <button className="btn deleteButton" onClick={() => deleteCustomer(customer.customerId)}>Delete</button>
+                    </td>
+                  </>
+                }
               </tr>
             ))}
           </tbody>

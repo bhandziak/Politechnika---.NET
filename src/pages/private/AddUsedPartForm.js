@@ -14,38 +14,7 @@ const AddUsedPartForm = () => {
     const location = useLocation();
     const { userId, role } = useContext(AuthContext);
     const st = location.state;
-    const [parts, setParts] = useState([
-        {
-            partId: 'e3a2f26b-8f63-4c8e-a3a5-1a5c9f68ef01',
-            namePart: 'Filtr oleju',
-            typePart: 'FO-123',
-            unitPrice: 25.50
-        },
-        {
-            partId: '6d8e58ac-c1c3-4a9f-a1c9-3dcb5b0a2a99',
-            namePart: 'Klocki hamulcowe',
-            typePart: 'KH-200',
-            unitPrice: 70.00
-        },
-        {
-            partId: 'b7f07fd3-77ff-4b20-8b7f-e348c3f57ed9',
-            namePart: 'Olej silnikowy',
-            typePart: '5W30',
-            unitPrice: 40.00
-        },
-        {
-            partId: 'f1e7d8d2-9f3c-4e8a-a94a-56c831d6ccf2',
-            namePart: 'Akumulator',
-            typePart: '60Ah',
-            unitPrice: 100.00
-        },
-        {
-            partId: '72a1be87-b44c-49c5-8fc4-727cfda99e6c',
-            namePart: 'Filtr powietrza',
-            typePart: 'FA-1000',
-            unitPrice: 20.00
-        }
-    ]);
+    const [parts, setParts] = useState([]);
 
     const [formData, setFormData] = useState({
         partId: "",

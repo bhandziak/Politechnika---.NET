@@ -88,7 +88,8 @@ const ServiceOrderPage = () => {
                   <td className='dataTd'>
                     {
                       so.statusOrder != null ? // zlecenie stworzone
-                        <LinkButton webpath={`/serviceorderdetails`} name='Details' stateObj={so} />
+                        <LinkButton webpath={`/serviceorderdetails`} name='Details' stateObj={so}
+                        cssClass={'detailsButton'} />
                         :  // jeszcze niestworzone zlecenie
                         ['receptionist', 'admin'].includes(role) ?
                           <LinkButton webpath={`/addserviceorder`} name='Add Order' stateObj={so} />

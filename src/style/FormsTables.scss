@@ -62,3 +62,26 @@ select {
     gap: 5px;
     color: vars.$btn-color;
 }
+
+.updateButton {
+    color: vars.$btn-update-color;
+}
+.updateButton:hover {
+    background-color: vars.$btn-update-color;
+}
+
+.detailsButton{
+    color: vars.$btn-details-color;
+}
+.detailsButton:hover{
+    background-color: vars.$btn-details-color;
+}
+
+.deleteButton {
+    background-color: vars.$btn-delete-color;
+    color: white;
+}
+.deleteButton:hover{
+    background-color: vars.$btn-delete-hover-color;
+    color: white;
+}
