@@ -219,17 +219,24 @@ namespace CarWorkshopProjekt.Controllers
         [HttpDelete("delete/{customerId}")]
         public async Task<IActionResult> DeleteCustomer(Guid customerId)
         {
-            var customer = await _context.Customers.FindAsync(customerId);
+            var customer = await _context.Customers
+                .Include(c => c.ServiceOrders)
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
 
             if (customer == null)
             {
                 return NotFound("Klient o podanym ID nie istnieje.");
             }
 
+            if (customer.ServiceOrders.Any())
+            {
+                return BadRequest("Nie można usunąć klienta, ponieważ ma przypisane zlecenia.");
+            }
+
             _context.Customers.Remove(customer);
 
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok("Klient został pomyślnie usunięty.");
         }
 
 
