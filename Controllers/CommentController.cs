@@ -15,12 +15,14 @@ namespace CarWorkshopProjekt.Controllers
     {
         private readonly AppDbContext _context;
         private readonly CommentMapper _commentMapper = new(); //Mapperly
+        private readonly ILogger<CommentController> _logger; //logger
         private readonly UserManager<User> _userManager;
 
-        public CommentController(AppDbContext context, UserManager<User> userManager)
+        public CommentController(AppDbContext context, UserManager<User> userManager, ILogger<CommentController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
 
@@ -35,6 +37,7 @@ namespace CarWorkshopProjekt.Controllers
 
             if (order == null)
             {
+                _logger.LogInformation($"Nie znaleziono zasobu o ID {addCommentDTO.ServiceOrderId}"); //logger
                 return NotFound("Zlecenie o podanym ID nie istnieje.");
             }
             
@@ -44,6 +47,7 @@ namespace CarWorkshopProjekt.Controllers
             _context.Comments.Add(newComment);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation($"Dodanie komentarza do zlecenia {order.ServiceOrderId}");//logger
             return Ok("Sukces");
         }
         // GET: api/comment/getAll/{serviceOrderId}
@@ -71,6 +75,7 @@ namespace CarWorkshopProjekt.Controllers
                 commentsDto.Add(dto);
             }
 
+            _logger.LogInformation($"Pobranie komentarzy do zlecenia {serviceOrderId}");//logger
             return Ok(commentsDto);
         }
     }

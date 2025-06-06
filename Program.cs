@@ -5,6 +5,7 @@ using CarWorkshopProjekt.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 
 namespace CarWorkshopProjekt
 {
@@ -13,6 +14,16 @@ namespace CarWorkshopProjekt
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            // Konfiguracja NLog z pliku nlog.config
+            //var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            //logger.LogError("Testowy b³¹d: sprawdzam NLog");
+            builder.Logging.ClearProviders();
+            builder.Logging.SetMinimumLevel(LogLevel.Information);
+            // Œcie¿ka do katalogu projektu dla nloga
+            var projectDir = Directory.GetParent(AppContext.BaseDirectory)!.Parent!.Parent!.Parent!.FullName;
+            Environment.SetEnvironmentVariable("PROJECT_DIR", projectDir);
+            builder.Host.UseNLog();
+//            builder.Logging.AddNLog("nlog.config");
 
             // CORS policy
             builder.Services.AddCors(options =>
@@ -85,7 +96,6 @@ namespace CarWorkshopProjekt
 
 
             var app = builder.Build();
-
             app.UseCors("AllowReactLocalhost3010");
 
             // Configure the HTTP request pipeline.
