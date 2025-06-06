@@ -250,6 +250,8 @@ namespace CarWorkshopProjekt.Controllers
                  .Include(so => so.Vehicle)
                  .Include(so => so.User)
                  .Include(so => so.ServiceTasks)
+                    .ThenInclude(task => task.UsedParts)
+                        .ThenInclude(up => up.Part)
                  .Where(so => so.CustomerId == customerId && so.UserId != null) //UserId != null - pomija nieaktywne jeszcze zlecenia 
                  .ToListAsync();
 
@@ -287,11 +289,14 @@ namespace CarWorkshopProjekt.Controllers
                     UserName = so.User.UserName,
                     Role = "mechanic"
                 },
-                ServiceTasks = so.ServiceTasks.Select(task => new AddServiceTask
+                ServiceTasks = so.ServiceTasks.Select(task => new ReturnServiceTask
                 {
                     ServiceOrderId = task.ServiceOrderId.ToString(),
                     Name = task.Name,
-                    LaborCost = task.LaborCost.ToString("F2", CultureInfo.InvariantCulture)//F2 - dwa miejsca po przecinku, InvariantCulture - niezależna lokalizacja separatora od regionu
+                    TotalCost = (task.UsedParts //F2 - dwa miejsca po przecinku
+                        .Sum(up => up.Part.UnitPrice * up.Quantity) + task.LaborCost)
+                        .ToString("F2", CultureInfo.InvariantCulture),
+                    LaborCost = task.LaborCost.ToString("F2", CultureInfo.InvariantCulture)
                 }).ToList()
             }).ToList();
 

@@ -9,6 +9,6 @@
         public ReturnCustomer Customer { get; set; }
         public ReturnVehicle Vehicle { get; set; }
         public ReturnUser Mechanic { get; set; }
-        public List<AddServiceTask> ServiceTasks { get; set; }
+        public List<ReturnServiceTask> ServiceTasks { get; set; }
     }
 }
