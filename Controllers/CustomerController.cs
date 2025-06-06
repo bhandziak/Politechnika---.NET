@@ -20,15 +20,18 @@ namespace CarWorkshopProjekt.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ICustomerService _customerService; // Services/ICustomerService
+        private readonly IRaportService _raportService; //Services/IRaportService
         private readonly CustomerMapper _customerMapper = new(); //Mapperly customer
         private readonly VehicleMapper _vehicleMapper = new(); //Mapperly vehicle
         public CustomerController(
             AppDbContext context,
-            ICustomerService customerService // Services
+            ICustomerService customerService, // Services
+            IRaportService raportService    //RaportService
             )
         {
             _context = context;
             _customerService = customerService; // Services
+            _raportService = raportService; //RaportService
         }
 
         // GET: api/customer/getCustomers
@@ -302,6 +305,23 @@ namespace CarWorkshopProjekt.Controllers
 
             return Ok(result);
         }
+        // GET: api/customer/downloadRaport/{month}
+        [HttpGet("downloadRaport/{month}")]
+        public IActionResult DownloadReport(int month)
+        {
+            // Walidacja miesiąca
+            if (month < 0 || month > 11)
+                return BadRequest("Miesiąc powinien być w zakresie 0-11.");
+            try
+            {
+            byte[] pdfBytes = _raportService.GenerateRepairReportPdf(month);
 
+            return File(pdfBytes, "application/pdf", $"raport_napraw_{month+1}.pdf");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
+using QuestPDF.Infrastructure;
 
 namespace CarWorkshopProjekt
 {
@@ -38,6 +39,8 @@ namespace CarWorkshopProjekt
             });
 
             // Add services to the container.
+            builder.Services.AddScoped<IRaportService, RaportService>(); //raport service PDF
+            QuestPDF.Settings.License = LicenseType.Community; //licencja
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
