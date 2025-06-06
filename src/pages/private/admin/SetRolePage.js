@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
-import axios from '../../api/axios';
-import APIs from '../../api/ApiURL';
-import { AuthContext } from '../../context/AuthProvider';
-import PopUp from '../../components/PopUp';
+import axios from '../../../api/axios';
+import APIs from '../../../api/ApiURL';
+import { AuthContext } from '../../../context/AuthProvider';
+import PopUp from '../../../components/PopUp';
 
 const SetRolePage = () => {
   const popUpRef = useRef();

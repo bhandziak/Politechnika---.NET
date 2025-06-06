@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocation } from 'react-router-dom';
-import { AuthContext } from "../../context/AuthProvider";
-import PopUp from "../../components/PopUp";
-import axios from "../../api/axios";
-import APIs from "../../api/ApiURL";
-import ValidatedInput from "../../components/ValidatedInput";
+import { AuthContext } from "../../../context/AuthProvider";
+import PopUp from "../../../components/PopUp";
+import axios from "../../../api/axios";
+import APIs from "../../../api/ApiURL";
+import ValidatedInput from "../../../components/ValidatedInput";
 
 const NAME_REGEX = /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,29}$/;
 const SURNAME_REGEX = /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż\-]{1,49}$/;

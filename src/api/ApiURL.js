@@ -37,7 +37,9 @@ const APIs = {
 //#US11
     ADD_PART: "api/part/addPart",
     UPDATE_PART: "api/part/update",
-    DELETE_PART: "api/part/delete"
+    DELETE_PART: "api/part/delete",
+//#US12
+    GET_RAPORT: "api/customer/getRaport"
 }
 
 export default APIs;

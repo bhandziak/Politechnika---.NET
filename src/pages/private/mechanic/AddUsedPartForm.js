@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
-import APIs from '../../api/ApiURL';
-import { AuthContext } from '../../context/AuthProvider';
-import PopUp from '../../components/PopUp';
-import ValidatedInput from '../../components/ValidatedInput';
+import axios from '../../../api/axios';
+import APIs from '../../../api/ApiURL';
+import { AuthContext } from '../../../context/AuthProvider';
+import PopUp from '../../../components/PopUp';
+import ValidatedInput from '../../../components/ValidatedInput';
 
 const INT_REGEX = /^(100|[1-9][0-9]?)$/;
 

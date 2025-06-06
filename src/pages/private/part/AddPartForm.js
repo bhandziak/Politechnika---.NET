@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocation } from 'react-router-dom';
-import { AuthContext } from "../../context/AuthProvider";
-import PopUp from "../../components/PopUp";
-import axios from "../../api/axios";
-import APIs from "../../api/ApiURL";
-import ValidatedInput from "../../components/ValidatedInput";
+import { AuthContext } from "../../../context/AuthProvider";
+import PopUp from "../../../components/PopUp";
+import axios from "../../../api/axios";
+import APIs from "../../../api/ApiURL";
+import ValidatedInput from "../../../components/ValidatedInput";
 
 const DECIMAL_REGEX = /^\d+(\,\d{1,2})?$/;
 

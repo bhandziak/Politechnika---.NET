@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useLocation } from 'react-router-dom';
-import { AuthContext } from "../../context/AuthProvider";
-import PopUp from "../../components/PopUp";
-import axios from "../../api/axios";
-import APIs from "../../api/ApiURL";
-import ValidatedInput from "../../components/ValidatedInput";
+import { AuthContext } from "../../../context/AuthProvider";
+import PopUp from "../../../components/PopUp";
+import axios from "../../../api/axios";
+import APIs from "../../../api/ApiURL";
+import ValidatedInput from "../../../components/ValidatedInput";
 
 const BRAND_REGEX = /^[A-Z][a-zA-Z\s\-]{1,29}$/;
 const MODEL_REGEX = /^[A-Za-z0-9\s\-]{1,30}$/;

@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from '../../api/axios';
-import APIs from '../../api/ApiURL';
-import { AuthContext } from '../../context/AuthProvider';
-import PopUp from '../../components/PopUp';
-import LinkButton from '../../components/LinkButton';
+import axios from '../../../api/axios';
+import APIs from '../../../api/ApiURL';
+import { AuthContext } from '../../../context/AuthProvider';
+import PopUp from '../../../components/PopUp';
+import LinkButton from '../../../components/LinkButton';
 
 const ServiceOrderDetails = () => {
   const popUpRef = useRef();

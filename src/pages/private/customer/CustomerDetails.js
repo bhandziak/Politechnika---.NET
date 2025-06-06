@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from '../../api/axios';
-import { AuthContext } from '../../context/AuthProvider';
-import LinkButton from '../../components/LinkButton';
-import APIs from '../../api/ApiURL';
-import PopUp from '../../components/PopUp';
+import axios from '../../../api/axios';
+import { AuthContext } from '../../../context/AuthProvider';
+import LinkButton from '../../../components/LinkButton';
+import APIs from '../../../api/ApiURL';
+import PopUp from '../../../components/PopUp';
 
 const CustomerDetails = () => {
   const popUpRef = useRef();
@@ -83,11 +83,18 @@ const CustomerDetails = () => {
         <div><span className='highlight'>Name: </span>{detail.nameCustomer}</div>
         <div ><span className='highlight'>Surname: </span>{detail.surnameCustomer}</div>
         <div ><span className='highlight'>Phone number: </span>{detail.phoneNumber}</div>
+      </div>
+      <div id='btnLayout'>
         {['receptionist', 'admin'].includes(role) &&
-          <LinkButton webpath='/addvehicle' name='Add vehicle' stateObj={
-            { customer: detail }
-          } />
+          <>
+            <LinkButton webpath='/addvehicle' name='Add vehicle' stateObj={
+              { customer: detail }
+            } />
+            <LinkButton webpath={`/raport`} name='Raport' stateObj={detail}
+              cssClass={'detailsButton'} />
+          </>
         }
+
       </div>
 
       <div style={{ 'width': '100%' }}>
@@ -138,10 +145,11 @@ const CustomerDetails = () => {
                           action: "update",
                           vehicle: vehicle
                         }
-                      } />
+                      }
+                        cssClass={'updateButton'} />
                     </td>
                     <td className='dataTd'>
-                      <button className="btn" onClick={() => deleteVehicle(vehicle.vehicleId)}>Delete</button>
+                      <button className="btn deleteButton" onClick={() => deleteVehicle(vehicle.vehicleId)}>Delete</button>
                     </td>
                   </>
                 }
