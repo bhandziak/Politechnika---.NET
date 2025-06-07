@@ -32,14 +32,10 @@ const Layout = () => {
       <nav id='navigationPanel'>
         <LinkButton webpath='/home' name='Home' />
         <LinkButton webpath='/customers' name='Customers' />
+        <LinkButton webpath='/serviceorder' name='Service Order' />
         {role == 'admin' &&
           <>
             <LinkButton webpath='/setrole' name='Set Role' />
-          </>
-        }
-        {['mechanic', 'receptionist', 'admin'].includes(role) &&
-          <>
-            <LinkButton webpath='/serviceorder' name='Service Order' />
           </>
         }
         {

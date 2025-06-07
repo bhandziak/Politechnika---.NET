@@ -39,7 +39,9 @@ const APIs = {
     UPDATE_PART: "api/part/update",
     DELETE_PART: "api/part/delete",
 //#US12
-    GET_RAPORT: "api/customer/getRaport"
+    GET_RAPORT: "api/customer/getRaport",
+//#US13
+    DOWNLOAD_RAPORT: "api/customer/downloadRaport"
 }
 
 export default APIs;

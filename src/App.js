@@ -53,6 +53,7 @@ const App = () => {
               <Route path="home" element={<HomePage />} />
               <Route path="customers" element={<CustomersPage />} />
               <Route path="details/:customerId" element={<CustomerDetails />} />
+              <Route path="serviceorder" element={<ServiceOrderPage />} />
             </Route>
             {/* Only Admin */}
             <Route element={<RequireAuth allowedRoles={['admin']} />}>
@@ -70,7 +71,6 @@ const App = () => {
 
             {/* Only Mechanic, Receptionist, Admin */}
             <Route element={<RequireAuth allowedRoles={['mechanic', 'receptionist', 'admin']} />}>
-              <Route path="serviceorder" element={<ServiceOrderPage />} />
               <Route path="serviceorderdetails" element={<ServiceOrderDetails />} />
               <Route path="parts" element={<PartsPage />} />
             </Route>

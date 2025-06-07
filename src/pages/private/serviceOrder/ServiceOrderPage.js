@@ -84,12 +84,13 @@ const ServiceOrderPage = () => {
                   <td className='dataTd'>{so.description}</td>
                   <td className='dataTd'>{so.mechanic?.userName}</td>
                   <td className='dataTd'>{so.statusOrder}</td>
-                  <td className='dataTd'>{so.dateFinished != null ? new Date(so.dateFinished).toLocaleString()  : "-"}</td>
+                  <td className='dataTd'>{so.dateFinished != null ? new Date(so.dateFinished).toLocaleString() : "-"}</td>
                   <td className='dataTd'>
                     {
                       so.statusOrder != null ? // zlecenie stworzone
+                        ['mechanic', 'admin'].includes(role) &&
                         <LinkButton webpath={`/serviceorderdetails`} name='Details' stateObj={so}
-                        cssClass={'detailsButton'} />
+                          cssClass={'detailsButton'} />
                         :  // jeszcze niestworzone zlecenie
                         ['receptionist', 'admin'].includes(role) ?
                           <LinkButton webpath={`/addserviceorder`} name='Add Order' stateObj={so} />
@@ -100,9 +101,9 @@ const ServiceOrderPage = () => {
                   <td className='dataTd'>
                     {
                       so.statusOrder != null ? // zlecenie stworzone
-                      <LinkButton webpath={`/comment`} name='Comments' stateObj={so} />
-                      :
-                      <></>
+                        <LinkButton webpath={`/comment`} name='Comments' stateObj={so} />
+                        :
+                        <></>
                     }
                   </td>
                 </tr>
