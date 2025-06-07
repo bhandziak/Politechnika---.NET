@@ -41,7 +41,8 @@ const APIs = {
 //#US12
     GET_RAPORT: "api/customer/getRaport",
 //#US13
-    DOWNLOAD_RAPORT: "api/customer/downloadRaport"
+    DOWNLOAD_RAPORT: "api/customer/downloadRaport",
+    GET_RAPORT_BY_MONTH: "api/customer/raport"
 }
 
 export default APIs;

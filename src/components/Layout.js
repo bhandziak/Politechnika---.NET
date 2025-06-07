@@ -36,6 +36,7 @@ const Layout = () => {
         {role == 'admin' &&
           <>
             <LinkButton webpath='/setrole' name='Set Role' />
+            <LinkButton webpath='/downloadraport' name='Raport' />
           </>
         }
         {

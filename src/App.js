@@ -27,6 +27,7 @@ import HomePage from "./pages/private/HomePage";
 import PartsPage from "./pages/private/part/PartsPage";
 import AddPartForm from "./pages/private/part/AddPartForm";
 import RaportPage from "./pages/private/raport/raportPage";
+import DownloadPage from "./pages/private/raport/DownloadPage";
 
 
 const App = () => {
@@ -59,6 +60,7 @@ const App = () => {
             <Route element={<RequireAuth allowedRoles={['admin']} />}>
               <Route path="setrole" element={<SetRolePage />} />
               <Route path="addpart" element={<AddPartForm />} />
+              <Route path="downloadraport" element={<DownloadPage />} />
             </Route>
 
             {/* Only Receptionist, Admin */}
