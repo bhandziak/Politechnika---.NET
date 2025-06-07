@@ -13,6 +13,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NBomber" Version="6.0.2" />
+    <PackageReference Include="NBomber.Http" Version="6.0.2" />
     <PackageReference Include="NLog" Version="5.5.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.5.0" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.5.0" />
@@ -22,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="GeneratedRaports\" />
     <Folder Include="logs\" />
     <Folder Include="Migrations\" />
     <Folder Include="wwwroot\" />

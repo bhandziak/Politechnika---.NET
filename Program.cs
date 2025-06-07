@@ -5,6 +5,7 @@ using CarWorkshopProjekt.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using NLog.Web;
 using QuestPDF.Infrastructure;
 
@@ -114,6 +115,14 @@ namespace CarWorkshopProjekt
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseStaticFiles(); //obs³uga zdjêæ
+
+            //Udostêpnienie folderu z raportami
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "GeneratedRaports")),
+                RequestPath = "/raports"
+            });
 
             app.MapControllers();
 

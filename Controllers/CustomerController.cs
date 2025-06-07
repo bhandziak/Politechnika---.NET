@@ -314,9 +314,27 @@ namespace CarWorkshopProjekt.Controllers
                 return BadRequest("Miesiąc powinien być w zakresie 0-11.");
             try
             {
-            byte[] pdfBytes = _raportService.GenerateRepairReportPdf(month);
+                byte[] pdfBytes = _raportService.GenerateRepairReportPdf(month);
+                //Ścieżka folderu na raporty
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "GeneratedRaports");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                //Tworzenie nazwy
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                string fileName = $"raport_napraw_{month + 1:D2}_{timestamp}.pdf";
+                string filePath = Path.Combine(folderPath, fileName);
 
-            return File(pdfBytes, "application/pdf", $"raport_napraw_{month+1}.pdf");
+                //Zapis
+                System.IO.File.WriteAllBytes(filePath, pdfBytes);
+
+                //Url do pliku
+                string fileUrl = $"{Request.Scheme}://{Request.Host}/raports/{fileName}";
+
+                //return File(pdfBytes, "application/pdf", fileName);
+                //return File(pdfBytes, "application/pdf", $"raport_napraw_{month+1}.pdf");
+                return Ok(new { url = fileUrl });
             }
             catch (Exception ex)
             {
