@@ -116,6 +116,13 @@ namespace CarWorkshopProjekt
             app.UseAuthorization();
             app.UseStaticFiles(); //obs³uga zdjêæ
 
+            //Tworzenie katalogu do raportów
+            string raportsFolder = Path.Combine(Directory.GetCurrentDirectory(), "GeneratedRaports");
+            if (!Directory.Exists(raportsFolder))
+            {
+                Directory.CreateDirectory(raportsFolder);
+            }
+
             //Udostêpnienie folderu z raportami
             app.UseStaticFiles(new StaticFileOptions
             {
