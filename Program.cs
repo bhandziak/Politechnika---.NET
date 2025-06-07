@@ -126,8 +126,7 @@ namespace CarWorkshopProjekt
             //Udostêpnienie folderu z raportami
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(
-                Path.Combine(Directory.GetCurrentDirectory(), "GeneratedRaports")),
+                FileProvider = new PhysicalFileProvider(raportsFolder),
                 RequestPath = "/raports"
             });
 
