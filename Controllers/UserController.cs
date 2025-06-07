@@ -118,22 +118,17 @@ namespace CarWorkshopProjekt.Controllers
         public async Task<IActionResult> GetMechanics()
         {
             var users = _userManager.Users.ToList();
-            var mechanicsList = new List<object>();
-
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-
-                if (roles.Contains("mechanic"))
+            var mechanicsList = await (
+                from user in _context.Users
+                join userRole in _context.UserRoles on user.Id equals userRole.UserId
+                join role in _context.Roles on userRole.RoleId equals role.Id
+                where role.Name == "mechanic"
+                select new
                 {
-                    mechanicsList.Add(new
-                    {
-                        mechanicId = user.Id,
-                        userName = user.UserName,
-                        role = "mechanic"
-                    });
-                }
-            }
+                    mechanicId = user.Id,
+                    userName = user.UserName,
+                    role = "mechanic"
+             }).ToListAsync();
 
             return Ok(new { mechanics = mechanicsList });
         }

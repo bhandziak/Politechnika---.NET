@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarWorkshopProjekt", "CarWo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NBomberTests", "..\NBomberTests\NBomberTests.csproj", "{2ACF47B6-7728-A663-AB2A-D62F9CAC87C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarWorkshop.Tests", "..\CarWorkshop.Tests\CarWorkshop.Tests.csproj", "{E5F66717-D81B-4D6B-B3D2-EA38D16880C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2ACF47B6-7728-A663-AB2A-D62F9CAC87C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ACF47B6-7728-A663-AB2A-D62F9CAC87C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ACF47B6-7728-A663-AB2A-D62F9CAC87C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5F66717-D81B-4D6B-B3D2-EA38D16880C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F66717-D81B-4D6B-B3D2-EA38D16880C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5F66717-D81B-4D6B-B3D2-EA38D16880C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F66717-D81B-4D6B-B3D2-EA38D16880C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
