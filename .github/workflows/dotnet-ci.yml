@@ -20,11 +20,11 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore dependencies
+    - name: restore
       run: dotnet restore src/CarWorkshopProjekt.csproj
 
-    - name: Build project
+    - name: build
       run: dotnet build src/CarWorkshopProjekt.csproj --configuration Release
 
-    - name: Run tests
+    - name: run
       run: dotnet test test/CarWorkshop.Tests.csproj --verbosity normal
