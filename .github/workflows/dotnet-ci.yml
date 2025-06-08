@@ -1,0 +1,28 @@
+name: .NET Build and Test
+
+on:
+  push:
+    branches: [ ci/github-actions ]
+  pull_request:
+    branches: [ ci/github-actions ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/CarWorkshopProjekt.csproj
+
+    - name: Build
+      run: dotnet build src/CarWorkshopProjekt.csproj --configuration Release --no-restore
+
+    - name: Run Tests
+      run: dotnet test test/Car.Workshop.Tests.csproj --configuration Release --no-build --verbosity normal
