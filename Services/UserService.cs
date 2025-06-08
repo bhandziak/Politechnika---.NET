@@ -47,7 +47,7 @@ namespace CarWorkshopProjekt.Services
             if (!result.Succeeded)
                 return (false, string.Join("; ", result.Errors.Select(e => e.Description)));
 
-            const string defaultRole = "admin";
+            const string defaultRole = "user";
             if (!await _roleManager.RoleExistsAsync(defaultRole))
                 await _roleManager.CreateAsync(new IdentityRole(defaultRole));
 
