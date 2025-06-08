@@ -8,12 +8,14 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Setup .NET
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
@@ -21,8 +23,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/CarWorkshopProjekt.csproj
 
-    - name: Build
-      run: dotnet build src/CarWorkshopProjekt.csproj --configuration Release --no-restore
+    - name: Build all projects
+      run: dotnet build --configuration Release
 
-    - name: Run Tests
-      run: dotnet test test/CarWorkshop.Tests.csproj --configuration Release --no-build --verbosity normal
+    - name: Run tests
+      run: dotnet test test/CarWorkshop.Tests.csproj --verbosity normal
