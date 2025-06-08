@@ -23,8 +23,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/CarWorkshopProjekt.csproj
 
-    - name: Build all projects
-      run: dotnet build --configuration Release
+    - name: Build project
+      run: dotnet build src/CarWorkshopProjekt.csproj --configuration Release
 
     - name: Run tests
       run: dotnet test test/CarWorkshop.Tests.csproj --verbosity normal
