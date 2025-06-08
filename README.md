@@ -20,6 +20,14 @@ Dodatkowo zaimplementowaliśmy:
 - Logowanie błędów – NLog
 - NBomber - testy wydajnościowe (branch api/nbomber)
 
+## Technologie serwerowe użyte w projekcie
+- ASP.NET Identity - zaawansowany system uwierzytelniania i autoryzacji użytkowników w bazie oraz ich ról. Upraszcza procesy rejestracji, logowania, tworzenia ciasteczek sesji oraz autoryzacji przez role
+- Mapperly - do automatycznego mapowania obiektów używając DTO
+- Swagger - narzędzie do testowania i dokumentowania api, można w nim w czytelny sposób zobaczyć struktorę api naszego projektu oraz wszystkie używane controllery
+- Dependency Injection - wstrzykiwanie zależności do controllerów zamiast twrzenia ich
+- EF Core - mapowanie klas c# na tabele w bazie danych
+- xUnit - framework do testów, w naszym projekcie służący do testów jednostkowych api
+
 ## Frontend
 
 Polecenie uruchamiające aplikację: ```npm run serve```.
