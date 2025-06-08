@@ -25,4 +25,4 @@ jobs:
       run: dotnet build src/CarWorkshopProjekt.csproj --configuration Release --no-restore
 
     - name: Run Tests
-      run: dotnet test test/Car.Workshop.Tests.csproj --configuration Release --no-build --verbosity normal
+      run: dotnet test test/CarWorkshop.Tests.csproj --configuration Release --no-build --verbosity normal
