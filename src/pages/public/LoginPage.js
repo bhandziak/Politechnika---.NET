@@ -78,8 +78,6 @@ const LoginPage = () => {
         setFormState({ login: "", password: "" });
     };
 
-    console.log("Current context LOGIN:", login, role);
-
 
     return (
         <div id="mainRegisterLoginPage">

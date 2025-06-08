@@ -22,6 +22,10 @@ const ServiceOrderPage = () => {
     setCurrentBtnAction("All Orders");
   }
 
+  const switchToEmptyOrders= () =>{
+    setCurrentBtnAction("Empty Orders");
+  }
+
   const fetchServiceOrders = async () => {
     try {
       const response = await axios.get(API_URL, {
@@ -50,16 +54,24 @@ const ServiceOrderPage = () => {
 
       <PopUp ref={popUpRef} />
       <div style={{ 'width': '100%' }}>
-        {
-          role == "mechanic" ?
-            <div id='btnLayout'>
-              <button className={currentBtnAction == "My Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToMyOrders}>My Services</button>
+        <div id='btnLayout'>
+          {
+            role == "mechanic" ?
+              <>
+                <button className={currentBtnAction == "My Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToMyOrders}>My Services</button>
+                <button className={currentBtnAction == "All Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToAllOrders}>All Services</button>
+              </>
+              :
+              <></>
+          }
+          {
+            ['receptionist', 'admin'].includes(role) &&
+            <>
               <button className={currentBtnAction == "All Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToAllOrders}>All Services</button>
-            </div>
-            :
-            <></>
-        }
-
+              <button className={currentBtnAction == "Empty Orders" ? 'navButton navButtonActive' : 'navButton'} onClick={switchToEmptyOrders}>Orders to create</button>
+            </>
+          }
+        </div>
         <table className='dataTable'>
           <thead>
             <tr className='dataTr'>
@@ -76,7 +88,7 @@ const ServiceOrderPage = () => {
           </thead>
           <tbody>
             {serviceOrders != null && serviceOrders.map((so, index) => (
-              so.statusOrder != null || ['receptionist', 'admin'].includes(role) ?
+              (so.statusOrder == null &&  currentBtnAction == "Empty Orders") ||  (so.statusOrder != null &&  currentBtnAction != "Empty Orders")?
                 <tr className='dataTr' key={so.serviceOrderId}>
                   <td className='dataTd'>{index + 1}</td>
                   <td className='dataTd'>{so.customer.nameCustomer} {so.customer.surnameCustomer}</td>
