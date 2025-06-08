@@ -49,7 +49,7 @@ Aplikacja React.js uruchamia się na porcie 3010. Jest napisana w oparciu o tech
 - US5 - wszystkie role
     - dodanie zdjęcia do pojazdu ```Customer``` -> ```Details``` -> ```Przycisk do wysyłania zdjęcia```
 - US6 - receptionist, admin
-    - dodanie nowego zlecenia dla pojazdu ```Service Order``` -> ```Wybór potencjalnego zlecenia``` -> ```Add Order```
+    - dodanie nowego zlecenia dla pojazdu ```Service Order``` -> ```Orders to create``` -> ```Wybór potencjalnego zlecenia``` -> ```Add Order```
 - US7 - mechanic
     - dodanie czynności serwisowych dla zlecenia ```Service Order```-> ```My Services``` -> ```Details``` -> ```Add Service Task```
 - US8 - mechanic
